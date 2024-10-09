@@ -1,0 +1,390 @@
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Entities></Entities>
+  <Roles></Roles>
+  <Workflows>
+    <Workflow WorkflowId="{d2d25316-5409-ee11-8f6e-000d3a0a1cb3}" Name="🛠️ 🌳 ENVIRONMENT">
+      <JsonFileName>/Workflows/ENVIRONMENT-D2D25316-5409-EE11-8F6E-000D3A0A1CB3.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.1</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <BusinessProcessType>0</BusinessProcessType>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ 🌳 ENVIRONMENT" />
+      </LocalizedNames>
+    </Workflow>
+    <Workflow WorkflowId="{b58b5bd3-00ff-ed11-8f6d-000d3a0a1cb3}" Name="🛠️ Copy file as a PDF" Description="Create a PDF copy of the OneDrive (Business) file you select in the same folder.">
+      <JsonFileName>/Workflows/CopyfileasaPDF-B58B5BD3-00FF-ED11-8F6D-000D3A0A1CB3.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.2.1.1</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <BusinessProcessType>0</BusinessProcessType>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Copy file as a PDF" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Create a PDF copy of the OneDrive (Business) file you select in the same folder." />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{5aae3541-eade-ed11-a7c6-000d3af4aef9}" Name="🛠️ Remove all Special Characters from String" Description="Removes all alphabetic characters from a string (both upper &amp; lower case)">
+      <JsonFileName>/Workflows/RemoveallSpecialCharactersfromString-5AAE3541-EADE-ED11-A7C6-000D3AF4AEF9.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.2</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Remove all Special Characters from String" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Removes all alphabetic characters from a string (both upper &amp; lower case)" />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{48c75980-ccb6-ed11-b596-000d3af4aef9}" Name="🛠️ Format Date" Description="Manipulates a date string into a new format.">
+      <JsonFileName>/Workflows/FormatDate-48C75980-CCB6-ED11-B596-000D3AF4AEF9.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.1</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Format Date" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Manipulates a date string into a new format." />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{6cb70239-38b8-ed11-b596-000d3af4aef9}" Name="🛠️ Remove all Letters from String" Description="Removes all alphabetic characters from a string (both upper &amp; lower case)">
+      <JsonFileName>/Workflows/RemoveallLettersfromString-6CB70239-38B8-ED11-B596-000D3AF4AEF9.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.1</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Remove all Letters from String" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Removes all alphabetic characters from a string (both upper &amp; lower case)" />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{e161406b-6ab7-ed11-b596-000d3af4aef9}" Name="🛠️ Isolate Dollar Amount" Description="Normalizes the input amount. Removes any non-numeric values and ensures the amount has two decimal points.">
+      <JsonFileName>/Workflows/IsolateDollarAmount-E161406B-6AB7-ED11-B596-000D3AF4AEF9.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.1</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Isolate Dollar Amount" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Normalizes the input amount. Removes any non-numeric values and ensures the amount has two decimal points." />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{9e7613c6-35b8-ed11-b596-000d3af4aef9}" Name="🛠️ Validate Cheque Number" Description="Normalizes **Extracted Cheque Number**. Removes zero padding and isolates the numeric value.">
+      <JsonFileName>/Workflows/ValidateChequeNumber-9E7613C6-35B8-ED11-B596-000D3AF4AEF9.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.1</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Validate Cheque Number" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Normalizes **Extracted Cheque Number**. Removes zero padding and isolates the numeric value." />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{34c8b2d8-86ea-ed11-a7c5-0022483cd1bd}" Name="🛠️ Remove all Whitespace from String" Description="Removes all alphabetic characters from a string (both upper &amp; lower case)">
+      <JsonFileName>/Workflows/RemoveallWhitespacefromString-34C8B2D8-86EA-ED11-A7C5-0022483CD1BD.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.2.0.4</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Remove all Whitespace from String" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Removes all alphabetic characters from a string (both upper &amp; lower case)" />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{437e8222-76fc-ec11-82e6-0022486da39f}" Name="🛠️ Get Prop Names" Description="Gets the property names in a JSON object and returns them in a stringified JSON array.">
+      <JsonFileName>/Workflows/GetPropNames-437E8222-76FC-EC11-82E6-0022486DA39F.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.0</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Get Prop Names" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Gets the property names in a JSON object and returns them in a stringified JSON array." />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{6ca4f78d-92f8-ec11-82e5-0022486da39f}" Name="🛠️ Get Excel Table Columns" Description="Returns an array of column names in an excel table.&#xA;More Info: https://github.com/NanaBanana98/Power-Automate-Personal-API-Docs/blob/main/utilities.md#get-excel-table-columns">
+      <JsonFileName>/Workflows/GetExcelTableColumns-6CA4F78D-92F8-EC11-82E5-0022486DA39F.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.0</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Get Excel Table Columns" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Returns an array of column names in an excel table.&#xA;More Info: https://github.com/NanaBanana98/Power-Automate-Personal-API-Docs/blob/main/utilities.md#get-excel-table-columns" />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{44395758-12f3-ec11-bb3c-0022486da39f}" Name="🛠️ Ensure Valid Excel Table" Description="Checks that an Excel table that matches the given parameters exists. One is created/modified to fit the given parameters if one does not exist. No columns are dropped when changing a table, only added if the columns listed do not exist.&#xA;More Info:  https://github.com/NanaBanana98/Power-Automate-Personal-API-Docs/blob/main/utilities.md#ensure-valid-excel-table">
+      <JsonFileName>/Workflows/EnsureValidExcelTable-44395758-12F3-EC11-BB3C-0022486DA39F.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.0</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Ensure Valid Excel Table" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Checks that an Excel table that matches the given parameters exists. One is created/modified to fit the given parameters if one does not exist. No columns are dropped when changing a table, only added if the columns listed do not exist.&#xA;More Info:  https://github.com/NanaBanana98/Power-Automate-Personal-API-Docs/blob/main/utilities.md#ensure-valid-excel-table" />
+      </Descriptions>
+    </Workflow>
+    <Workflow WorkflowId="{fd66f4be-caf3-ec11-bb3c-0022486da39f}" Name="🛠️ Save Email as PDF" Description="Formats an email into a PDF and saves the resultant PDF file at a given path. The following email fields are formatted in the PDF.&#xA;&#xA;- Recipients&#xA;- Sender&#xA;- Date Received&#xA;- Email Subject&#xA;- Email Body&#xA;- Any image attachments&#xA;&#xA;*Note:* We only include image attachments because there is a limit on the size of the PDF that can be created. To avoid exceeding the size limit, we omit any potentially large files.">
+      <JsonFileName>/Workflows/SaveEmailasPDF-FD66F4BE-CAF3-EC11-BB3C-0022486DA39F.json</JsonFileName>
+      <Type>1</Type>
+      <Subprocess>0</Subprocess>
+      <Category>5</Category>
+      <Mode>0</Mode>
+      <Scope>4</Scope>
+      <OnDemand>0</OnDemand>
+      <TriggerOnCreate>0</TriggerOnCreate>
+      <TriggerOnDelete>0</TriggerOnDelete>
+      <AsyncAutodelete>0</AsyncAutodelete>
+      <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+      <StateCode>1</StateCode>
+      <StatusCode>2</StatusCode>
+      <RunAs>1</RunAs>
+      <IsTransacted>1</IsTransacted>
+      <IntroducedVersion>1.0.0.0</IntroducedVersion>
+      <IsCustomizable>1</IsCustomizable>
+      <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+      <PrimaryEntity>none</PrimaryEntity>
+      <LocalizedNames>
+        <LocalizedName languagecode="1033" description="🛠️ Save Email as PDF" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description languagecode="1033" description="Formats an email into a PDF and saves the resultant PDF file at a given path. The following email fields are formatted in the PDF.&#xA;&#xA;- Recipients&#xA;- Sender&#xA;- Date Received&#xA;- Email Subject&#xA;- Email Body&#xA;- Any image attachments&#xA;&#xA;*Note:* We only include image attachments because there is a limit on the size of the PDF that can be created. To avoid exceeding the size limit, we omit any potentially large files." />
+      </Descriptions>
+    </Workflow>
+  </Workflows>
+  <FieldSecurityProfiles></FieldSecurityProfiles>
+  <Templates />
+  <EntityMaps />
+  <EntityRelationships />
+  <OrganizationSettings />
+  <optionsets />
+  <CustomControls />
+  <EntityDataProviders />
+  <connectionreferences>
+    <connectionreference connectionreferencelogicalname="cr8e1_ExcelPowerAutomateAdminUtility">
+      <connectionreferencedisplayname>🔌 🛠️  Excel: PowerAutomate Admin Utility</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness</connectorid>
+      <description>Connection to PowerAutomate Admin's Excel account</description>
+      <iscustomizable>1</iscustomizable>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="cr8e1_ExcelScriptConnection">
+      <connectionreferencedisplayname>🔌 🛠️ Excel Script Connection</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness</connectorid>
+      <description>Connection to where the excel file is containing scripts used in Power Automate</description>
+      <iscustomizable>1</iscustomizable>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="cr8e1_OneDrivePowerAutomateAdminUtility">
+      <connectionreferencedisplayname>🔌 🛠️  OneDrive: PowerAutomate Admin Utility</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness</connectorid>
+      <description>General connection to Power Automate Admin OneDrive account</description>
+      <iscustomizable>1</iscustomizable>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="cr8e1_sharedcommondataserviceforapps_f39c3">
+      <connectionreferencedisplayname>🔌 🛠️ Microsoft Dataverse Connection</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps</connectorid>
+      <description>Connection to AI Builder</description>
+      <iscustomizable>1</iscustomizable>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="cr8e1_sharedregexmatchingip_40ae8">
+      <connectionreferencedisplayname>🔌 🛠️ RegEx Matching (Independent Publisher)</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_regexmatchingip</connectorid>
+      <description>Used to match the independent date components.(Ie: day, month, year) so we can manipulate the format of the components </description>
+      <iscustomizable>1</iscustomizable>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="new_shareduiflow_aad41">
+      <connectionreferencedisplayname>🔌 💻 Machine Connection - Ariana's Laptop</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_uiflow</connectorid>
+      <description>Connects to a Machine where local flows can run</description>
+      <iscustomizable>1</iscustomizable>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+  </connectionreferences>
+  <Languages>
+    <Language>1033</Language>
+  </Languages>
+</ImportExportXml>

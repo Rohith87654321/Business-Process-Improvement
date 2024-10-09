@@ -1,0 +1,1740 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_onedriveforbusiness_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "cr8e1_OneDrivePowerAutomateAdminUtility"
+        },
+        "api": {
+          "name": "shared_onedriveforbusiness"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "d509c788-b683-40cf-bcef-0cb239d1a6c3"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "Email",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Save email data as: dataUri(triggerOutputs()?['body'])",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_variable:_Trigger:_Email_String": {
+          "runAfter": {
+            "Compose:_Initialize_Trigger_Inputs": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f474cd8a-4032-4f65-a951-47d2c55ae29d"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger: Email String",
+                "type": "string",
+                "value": "@triggerBody()['text']"
+              }
+            ]
+          },
+          "description": "Trigger Variable - data uri with data type data:application/json | Used in | Scope: Set Properties"
+        },
+        "Initialize_variable:_Trigger:_Temp_Path": {
+          "runAfter": {
+            "Initialize_variable:_Trigger:_Email_String": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "6a9c6487-4587-4901-90df-0337834ab887"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger: Path",
+                "type": "string",
+                "value": "@body('Run_a_Child_Flow')?['temp_folder']"
+              }
+            ]
+          },
+          "description": "Trigger Variable | Used in: | Save PDF/ Condition: Body has No Img Tag OR RocketPDF POST Failed / Scope: Save HTML Content as PDF at provided path | Scope: Validate Path"
+        },
+        "Compose:_📢__DEFINITION": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "5306b5e5-6d6d-47d3-af64-5dd4e499a4f7"
+          },
+          "type": "Compose",
+          "inputs": "### Purpose\n\nFormats an email into a PDF and saves the resultant PDF file at a given path. The following email fields are formatted in the PDF.\n\n- Recipients\n- Sender\n- Date Received\n- Email Subject\n- Email Body\n- Number of Attachments\n\n************Note:************ We do not include attchments because there is a [limit on the size of the PDF](https://learn.microsoft.com/en-us/connectors/onedriveforbusiness/) that can be created. To avoid exceeding the size limit, we omit any attachments. \n\n### Inputs\n\n**********Path (String) -********** The directory where the resultant PDF will be saved.\n\n**Email (JSON)** – The email body returned when using the Power Automate automated flow event [“When a new email arrives”.](https://learn.microsoft.com/en-us/power-automate/email-triggers)\n\n### Outputs\n\n**Status Code (integer)** – Indicates the state of the flow on termination.\n\n 0: Success\n\n-1: Invalid trigger input(s)\n\n\n**File Content (data URI)** – The content of the email. The content will ALWAYS be returned with PDF [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).\n\n### Dependencies\n**Connection References**\n🔌 🛠️ PowerAutomate Admin Utility: OneDrive Connection"
+        },
+        "Initialize_variable:_PDF_File_Name": {
+          "runAfter": {
+            "Compose:_Initialize_Helper_Variables_-_For_Saving_the_PDF": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "5d8726e4-ce92-479f-84cd-e4e80fa6a801"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "PDF File Name",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "Name of the PDF the email content will be saved to"
+        },
+        "Initialize_variable:_Temp_File_Name_(no_ext)": {
+          "runAfter": {
+            "Initialize_variable:_PDF_File_Name": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7465caef-1e09-413e-be8b-d53cbad40815"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp File Name",
+                "type": "string",
+                "value": "Temp_"
+              }
+            ]
+          },
+          "description": "When converting one content type to image, you must create a physical file in the system before conversion. "
+        },
+        "Compose:_Initialize_Output_Variables_": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9f97f071-bf6d-4c00-94ca-5bdac9ae600d"
+          },
+          "type": "Compose",
+          "inputs": "PDF FIle content used in:\n-Scope: Save PDF / Condition: Body Content has Img tag, then send to PDFRocket\n- Scope: Save PDF / Condition: Body has No Img Tag OR RocketPDF POST Failed / Scope: Save HTML Content as PDF at provided path / Condition: In order to convert a file it must be less than 2MB - If yes\n\nPDF File Content & Status Code used in:\n- Validate Path / Condition: Has Failed is equal to True - If Yes / Respond to PowerApps\n- Respond to PowerApps"
+        },
+        "Initialize_variable:_OUTPUT_Status_Code": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_-_PDF_File_Content(DataUri)": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "11d7f6db-7879-468c-a899-3d82e4d37092"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Status Code",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "description": "Indicates the state of the flow on termination"
+        },
+        "Compose:_Initialize_Helper_Variables_-_For_Saving_the_PDF": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9c52542f-80f9-4dd1-8979-687e2656ca91"
+          },
+          "type": "Compose",
+          "inputs": "PDF FIle Name & Temp File Name Used In\n- Scope: Create UID - Unique name for output file based on current datetime\n- Scope: Save PDF / Condition: Body has No Img Tag OR RocketPDF POST Failed / Scope: Save HTML Content as PDF at provided path"
+        },
+        "Compose:_Initialize_Helper_Variables_-_For_Validation": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ba9c53de-afff-45c2-a64e-f7d0fa079a46"
+          },
+          "type": "Compose",
+          "inputs": " "
+        },
+        "Initialize_variable:_Invalid_Path_Characters": {
+          "runAfter": {
+            "Compose:_Initialize_Helper_Variables_-_For_Validation": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c4fe6bc6-8585-4943-9acb-e803d1652baf"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Invalid Path Characters",
+                "type": "array",
+                "value": [
+                  "*",
+                  "|",
+                  ">",
+                  "<",
+                  ":",
+                  "?"
+                ]
+              }
+            ]
+          },
+          "description": "List of characters that CANNOT be in a path on windows"
+        },
+        "Compose:_Initialize_Helper_Variables_-_for_formatting_the_output_file": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "84a65765-dd86-4ed0-86b1-89df4e2f7fd5"
+          },
+          "type": "Compose",
+          "inputs": "All used in \n- Scope: Define Document Sections\n\nHTML Body Content USAGE\n- Scope: Add Email Properties to Email HTML text\n\nHTML Content used in:\n- Scope: Save PDF / Condition: Body Content has Img tag, then send to PDFRocket / HTTP POST to PDFRocket\n- Scope: Save PDF / Condition: Body Content has Img tag, then send to PDFRocket\n-  Scope: Save PDF /  Condition: Body has No Img Tag OR RocketPDF POST Failed\n- Scope: Save PDF /  Condition: Body has No Img Tag OR RocketPDF POST Failed / Scope: Save HTML Content as PDF at provided path / Create file: Temp HTML File"
+        },
+        "Initialize_variable:_HTML_Body_Content": {
+          "runAfter": {
+            "Initialize_variable:_HTML_Doc_Floor": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d79ea0bf-0bba-4b57-8dbf-e9aa880ea9db"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "HTML Body Content",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "Content that appears between <body> tags. In between the HTML Doc ceiling & floor"
+        },
+        "Initialize_variable:_HTML_Content_": {
+          "runAfter": {
+            "Initialize_variable:_HTML_Body_Content": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "93112d28-d89c-439e-9249-36a85d4228a0"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "HTML Content",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "HTML Doc Ceiling + <body> + HTML Body Content + </body> + HTML Doc Floor"
+        },
+        "Initialize_variable:_Has_Failed_=_false": {
+          "runAfter": {
+            "Initialize_variable:_Invalid_Path_Characters": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "12cce92f-310a-4513-8714-7f14818f6597"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Has Failed",
+                "type": "boolean",
+                "value": "@false"
+              }
+            ]
+          },
+          "description": "Indicates if there is a failure"
+        },
+        "Initialize_variable:_HTML_Doc_Ceiling": {
+          "runAfter": {
+            "Compose:_Initialize_Helper_Variables_-_for_formatting_the_output_file": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a0261cad-8e1a-4381-a4e4-c0a74d0c9c23"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "HTML Doc Ceiling",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "The section of HTML Content above the <body> tag"
+        },
+        "Initialize_variable:_HTML_Doc_Floor": {
+          "runAfter": {
+            "Initialize_variable:_HTML_Doc_Ceiling": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "333e5000-68ab-4182-914a-763b3dc0fded"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "HTML Doc Floor",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "The section of the HTML doc below the </body> tag"
+        },
+        "Initialize_variable:_Temp_String": {
+          "runAfter": {
+            "Initialize_variable:_Has_Failed_=_false": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9bc2d45e-0495-478c-a848-b8a336173dd3"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp String",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "Used in intermediate steps"
+        },
+        "Initialize_variable:_OUTPUT_-_PDF_File_Content(DataUri)": {
+          "runAfter": {
+            "Compose:_Initialize_Output_Variables_": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4b2dfa19-c9f3-4b62-b79f-2414d318c02b"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "PDF File Content",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Compose:_Define_Email_Properties": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "995b9c00-f8a3-4db3-a986-317046a7a96f"
+          },
+          "type": "Compose",
+          "inputs": "Email Props that are gonna be formatted into PDF\nAll of the below are used in \n- Scope: Set Properties\n- Scope: Add Email Properties to Email HTML text"
+        },
+        "Initialize_variable:_Email_JSON": {
+          "runAfter": {
+            "Compose:_Define_Email_Properties": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4e540017-ba36-4716-ab12-ea67f2e64008"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Email JSON",
+                "type": "object",
+                "value": {}
+              }
+            ]
+          },
+          "description": "Save the parsed JSON object here"
+        },
+        "Initialize_variable:_email_subject": {
+          "runAfter": {
+            "Initialize_variable:_Email_JSON": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ad2bc772-239b-4175-8503-4f6018cc3271"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "email subject",
+                "type": "string",
+                "value": "UNDEFINED"
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_email_body": {
+          "runAfter": {
+            "Initialize_variable:_email_subject": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7b2f0fb5-1c16-46cf-8608-0d9cc83ef3a0"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "email body",
+                "type": "string",
+                "value": "UNDEFINED"
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_email_received_dateTime": {
+          "runAfter": {
+            "Initialize_variable:_email_body": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4509199e-160e-40e0-934d-eafee2d8f6cb"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "email received dateTime",
+                "type": "string",
+                "value": "UNDEFINED"
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_email_isHTML": {
+          "runAfter": {
+            "Initialize_variable:_email_received_dateTime": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "50ee37f4-605d-45c6-810f-a71ad8ed4cdd"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "email isHTML",
+                "type": "boolean",
+                "value": "@false"
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_email_to": {
+          "runAfter": {
+            "Initialize_variable:_email_isHTML": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "41287a8b-1543-4809-a191-42d1931c2857"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "email to",
+                "type": "string",
+                "value": "UNDEFINED"
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_email_from": {
+          "runAfter": {
+            "Initialize_variable:_email_to": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "11179cfe-040e-4864-a8d6-0d5bca5589fd"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "email from",
+                "type": "string",
+                "value": "UNDEFINED"
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_email_attachments": {
+          "runAfter": {
+            "Initialize_variable:_email_from": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1c0b1cfd-caf0-40e8-abca-eea92938ca73"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "email attachments",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Scope:_Set_Properties": {
+          "actions": {
+            "Set_variable:_email_body": {
+              "runAfter": {
+                "Set_variable:_email_subject": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "8d47602e-babb-4465-bac2-a5909526f572"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "email body",
+                "value": "@body('Parse_JSON:_Get_Email_Object_JSON')?['body']"
+              }
+            },
+            "Set_variable:_email_isHTML": {
+              "runAfter": {
+                "Set_variable:_email_body": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Skipped",
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "8a5ee92d-ff4c-496d-951d-ea7bcbdd83a4"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "email isHTML",
+                "value": "@body('Parse_JSON:_Get_Email_Object_JSON')?['isHtml']"
+              }
+            },
+            "Set_variable:_email_received_dateTime": {
+              "runAfter": {
+                "Set_variable:_email_isHTML": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Skipped",
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a7c9776b-6ca4-4c17-9854-4acd1978f5ea"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "email received dateTime",
+                "value": "@body('Parse_JSON:_Get_Email_Object_JSON')?['receivedDateTime']"
+              }
+            },
+            "Set_variable:_email_to": {
+              "runAfter": {
+                "Set_variable:_email_received_dateTime": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Failed",
+                  "Skipped"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "15fa06c0-544b-4c96-bcaa-cebfba2fc9f5"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "email to",
+                "value": "@body('Parse_JSON:_Get_Email_Object_JSON')?['toRecipients']"
+              }
+            },
+            "Set_variable:_email_from": {
+              "runAfter": {
+                "Set_variable:_email_to": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Skipped",
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "9e700a0d-0c06-40f6-a0d3-ca2f3a193fee"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "email from",
+                "value": "@body('Parse_JSON:_Get_Email_Object_JSON')?['from']"
+              }
+            },
+            "Set_variable:_email_attachments": {
+              "runAfter": {
+                "Set_variable:_email_from": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Failed",
+                  "Skipped"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5b6eef8a-bdfb-4c6a-b52e-e4504e9d5772"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "email attachments",
+                "value": "@body('Parse_JSON:_Get_Email_Object_JSON')?['attachments']"
+              }
+            },
+            "Compose:_Purpose": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "0576ee16-c9cd-421a-b2a1-c65b467125d2"
+              },
+              "type": "Compose",
+              "inputs": "Gets the required propetties from email input so we can format this information into the PDF"
+            },
+            "Set_variable:_email_subject": {
+              "runAfter": {
+                "Set_variable:_Email_JSON": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Skipped",
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "bb3b214b-485f-4ebe-b9a2-5fcc8294deb9"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "email subject",
+                "value": "@body('Parse_JSON:_Get_Email_Object_JSON')?['subject']"
+              }
+            },
+            "Set_variable:_Email_JSON": {
+              "runAfter": {
+                "Set_variable:_Has_Failed_=_true,_Parse_JSON_failed": [
+                  "Succeeded",
+                  "TimedOut",
+                  "Skipped",
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "b63c797a-8fc4-496d-ab4d-6ce4933aca79"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Email JSON",
+                "value": {
+                  "receivedDateTime": "@body('Parse_JSON:_Get_Email_Object_JSON')?['receivedDateTime']",
+                  "subject": "@body('Parse_JSON:_Get_Email_Object_JSON')['subject']",
+                  "body": "@body('Parse_JSON:_Get_Email_Object_JSON')['body']",
+                  "from": "@body('Parse_JSON:_Get_Email_Object_JSON')['from']",
+                  "attachments": "@body('Parse_JSON:_Get_Email_Object_JSON')?['attachments']",
+                  "hasAttachments": "@body('Parse_JSON:_Get_Email_Object_JSON')?['hasAttachments']",
+                  "bodyPreview": "@body('Parse_JSON:_Get_Email_Object_JSON')?['bodyPreview']"
+                }
+              },
+              "description": "toRecipients: split(body('Parse_JSON:_Get_Email_Object_JSON')['toRecipients'],';'),  ccRecipients:  split(if(equals(body('Parse_JSON:_Get_Email_Object_JSON')?['ccRecipients'],null),'',body('Parse_JSON:_Get_Email_Object_JSON')?['ccRecipients']),';')"
+            },
+            "Set_variable:_Has_Failed_=_true,_Parse_JSON_failed": {
+              "runAfter": {
+                "Parse_JSON:_Get_Email_Object_JSON": [
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "2ca61c49-b600-4f82-ab03-9a8d2a1bebf9"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Has Failed",
+                "value": "@true"
+              }
+            },
+            "Parse_JSON:_Get_Email_Object_JSON": {
+              "runAfter": {
+                "Compose:_Purpose": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "88732a14-d231-48e8-a326-23e48b39376e"
+              },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@decodeDataUri(variables('Trigger: Email String'))",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "receivedDateTime": {
+                      "type": "string"
+                    },
+                    "hasAttachments": {
+                      "type": "boolean"
+                    },
+                    "subject": {
+                      "type": "string"
+                    },
+                    "bodyPreview": {
+                      "type": "string"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "toRecipients": {
+                      "type": "string"
+                    },
+                    "isHtml": {
+                      "type": "boolean"
+                    },
+                    "attachments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "contentType": {
+                            "type": "string"
+                          },
+                          "contentBytes": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Scope:_Validate_Path": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1d8a53d7-777e-456f-9059-7e6f8ab138fe"
+          },
+          "type": "Scope"
+        },
+        "Scope:_Validate_Path": {
+          "actions": {
+            "Compose:_Check_that_trigger_Path_Inputs_are_valid": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "f83d41b3-7bfe-41b6-9104-28067018ae80"
+              },
+              "type": "Compose",
+              "inputs": "Ensure that the inputs are valid. Subsequent steps requires the inputs to be of certain format. If they are not in that format then we must exit because the subsequent steps will fail\n"
+            },
+            "Compose:_Comment_on_path_validation": {
+              "runAfter": {
+                "Compose:_Check_that_trigger_Path_Inputs_are_valid": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "6409975c-8e39-411e-b41d-101373ac8b18"
+              },
+              "type": "Compose",
+              "inputs": "@{intersection(chunk(variables('Trigger: Path'),1),variables('Invalid Path Characters'))}\n1. turn the path into an array using the chunk function\n2. Intersect chunked path and invalid characters\nIf there are any invalid chars the array resulted from intersection would be greater than 0. If all characters are valid then the intersected array would be - (no overlap)"
+            },
+            "Set_variable:_Has_Failed_-_Invalid_Path": {
+              "runAfter": {
+                "Compose:_Comment_on_path_validation": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5108348b-2015-4381-8897-6fc921456d49"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Has Failed",
+                "value": "@greater(length(intersection(chunk(variables('Trigger: Path'),1),variables('Invalid Path Characters'))),0)"
+              },
+              "description": "equals(length(intersection(chunk(variables('Trigger: Path'),1),variables('Invalid Path Characters'))),0)"
+            },
+            "Condition:_Has_Failed_is_equal_to_True": {
+              "actions": {
+                "Set_variable:_Status_Code_=_-1": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "9e95d85a-4159-4757-a3c1-3b051eb83ee5"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Status Code",
+                    "value": 0
+                  }
+                },
+                "Respond_to_a_PowerApp_or_flow:_Error_-_Invalid_Trigger": {
+                  "runAfter": {
+                    "Set_variable:_Status_Code_=_-1": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "d56dbfef-b39b-4d43-b5cb-50f4f4d180b8"
+                  },
+                  "type": "Response",
+                  "kind": "PowerApp",
+                  "inputs": {
+                    "statusCode": 200,
+                    "body": {
+                      "content": "@variables('PDF File Content')",
+                      "status": "@variables('Status Code')"
+                    },
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "content": {
+                          "title": "content",
+                          "x-ms-dynamically-added": true,
+                          "type": "string"
+                        },
+                        "status": {
+                          "title": "status",
+                          "x-ms-dynamically-added": true,
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "Terminate:_Error_-_Invalid_Trigger": {
+                  "runAfter": {
+                    "Respond_to_a_PowerApp_or_flow:_Error_-_Invalid_Trigger": [
+                      "Succeeded",
+                      "Skipped"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "2f9e02fd-ffa7-441c-8234-4da5d73d9186"
+                  },
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Failed",
+                    "runError": {
+                      "code": "@{variables('Status Code')}",
+                      "message": "The Trigger Input(s) are invalid"
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Set_variable:_Has_Failed_-_Invalid_Path": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "equals": [
+                  "@variables('Has Failed')",
+                  "@true"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "bdaf9686-88a1-4dc0-9e27-50aed6d77c40"
+              },
+              "type": "If",
+              "description": "If an input is invalid then exit"
+            }
+          },
+          "runAfter": {
+            "Initialize_variable:_email_attachments": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_HTML_Content_": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_OUTPUT_Status_Code": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Trigger:_Temp_Path": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Temp_String": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_RocketPDF_Api_Key": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "55f8bbea-5953-4b6d-a546-c2404dd2d77f"
+          },
+          "type": "Scope"
+        },
+        "Scope:_Create_UID_-_Unique_name_for_output_file_based_on_current_datetime": {
+          "actions": {
+            "Current_time": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "be7a76bd-a59f-4453-94f8-ac8791dcd051"
+              },
+              "type": "Expression",
+              "kind": "CurrentTime",
+              "inputs": {}
+            },
+            "Compose:_Create_UID_-_Preview": {
+              "runAfter": {
+                "Current_time": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "dfa90fea-4b8d-4f41-a0dd-877fb3fba162"
+              },
+              "type": "Compose",
+              "inputs": "@formatDateTime(body('Current_time'), 'Mddyyyyhmmss')"
+            },
+            "Set_variable:_Temp_File_Name_(no_ext)": {
+              "runAfter": {
+                "Compose:_Create_UID_-_Preview": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "3fa3115b-c055-4348-84d5-b8c0ad1397a9"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Temp File Name",
+                "value": "Temp_@{formatDateTime(body('Current_time'), 'Mddyyyyhmmss')}"
+              }
+            },
+            "Set_variable:_Format_file_name_for_PDF": {
+              "runAfter": {
+                "Set_variable:_Temp_File_Name_(no_ext)": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a59ece50-0ade-4418-aff7-20b2ea1145e2"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "PDF File Name",
+                "value": "Email_@{formatDateTime(body('Current_time'), 'Mddyyyyhmmss')}.pdf"
+              },
+              "description": "concat('FROM_',variables('Email JSON')['from'],'_',formatDateTime(variables('Email JSON')['receivedDateTime'],'ddMMyyhhmm'))"
+            }
+          },
+          "runAfter": {
+            "Scope:_Validate_Path": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9c14f63d-ff71-46b9-a90f-b1dceba894d6"
+          },
+          "type": "Scope"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose:_Preview_Output": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d56dbfef-b39b-4d43-b5cb-50f4f4d180b8"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "content": "@variables('PDF File Content')",
+              "status": 0
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "title": "content",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status": {
+                  "title": "status",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "Compose:_Preview_Output": {
+          "runAfter": {
+            "Scope:_Save_PDF": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c0a80898-732a-4dc2-8ede-5a09d2460dc6"
+          },
+          "type": "Compose",
+          "inputs": "file: @{variables('PDF File Content')}\nstatus code: @{variables('Status Code')}"
+        },
+        "Scope:_Save_PDF": {
+          "actions": {
+            "Set_variable:_Has_Failed_=_false": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "bb5c1a5a-dbe1-4f21-a3c8-34cfadeb5acf"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Has Failed",
+                "value": "@false"
+              }
+            },
+            "Condition:_Body_Content_has_Img_tag,_then_send_to_PDFRocket": {
+              "actions": {
+                "Compose:_Note_on_PDF_Rocket": {
+                  "runAfter": {
+                    "Set_variable:_PDF_File_Content": [
+                      "Succeeded",
+                      "TimedOut",
+                      "Skipped",
+                      "Failed"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "0350024d-88fd-4add-87ef-4d4a37793f35"
+                  },
+                  "type": "Compose",
+                  "inputs": "PDF Rocket allows 200 free conversions per month. For this reason, we limit POST requests to html documents only with images (because using OneDrive Conversion tool ruins images)"
+                },
+                "HTTP_POST_to_PDFRocket": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "9fbabb3e-4b71-42ca-bcb9-51c7ec834482"
+                  },
+                  "type": "Http",
+                  "inputs": {
+                    "method": "POST",
+                    "uri": "https://api.html2pdfrocket.com/pdf",
+                    "body": {
+                      "apiKey": "@variables('RocketPDF Api Key')",
+                      "value": "@variables('HTML Content')"
+                    }
+                  }
+                },
+                "Set_variable:_Has_Failed_=_true": {
+                  "runAfter": {
+                    "HTTP_POST_to_PDFRocket": [
+                      "Failed"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "ac551f45-3896-4374-84d4-54a917a78bb9"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Has Failed",
+                    "value": "@true"
+                  }
+                },
+                "Set_variable:_PDF_File_Content": {
+                  "runAfter": {
+                    "Set_variable:_Has_Failed_=_true": [
+                      "Succeeded",
+                      "TimedOut",
+                      "Skipped",
+                      "Failed"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "0c6dadf8-d634-4c2d-af64-4cecd1b64a48"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "PDF File Content",
+                    "value": "@{dataUri(body('HTTP_POST_to_PDFRocket'))}"
+                  }
+                }
+              },
+              "runAfter": {
+                "Set_variable:_Has_Failed_=_false": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "contains": [
+                  "@variables('HTML Body Content')",
+                  "<img"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "98d39ef1-46b5-4a0b-b4c3-4d08150d5687"
+              },
+              "type": "If"
+            },
+            "Condition:_Body_has_No_Img_Tag_OR_RocketPDF_POST_Failed": {
+              "actions": {
+                "Scope:_Save_HTML_Content_as_PDF_at_provided_path": {
+                  "actions": {
+                    "Create_file:_Temp_HTML_File": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "aac0082f-293d-4aa8-b0d2-c23a2ffc8d02"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_onedriveforbusiness_1",
+                          "operationId": "CreateFile",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                        },
+                        "parameters": {
+                          "folderPath": "@variables('Trigger: Path')",
+                          "name": "@{variables('Temp File Name')}.html",
+                          "body": "@variables('HTML Content')"
+                        },
+                        "authentication": {
+                          "type": "Raw",
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                        }
+                      },
+                      "description": "We create this file for the sake of formatting. This will be converted to PDF",
+                      "runtimeConfiguration": {
+                        "contentTransfer": {
+                          "transferMode": "Chunked"
+                        }
+                      }
+                    },
+                    "Condition:_In_order_to_convert_a_file_it_must_be_less_than_2MB": {
+                      "actions": {
+                        "Convert_file:_Temp_HTML_to_PDF": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "0076994c-001c-4614-9e4b-519423fd6fd4"
+                          },
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "shared_onedriveforbusiness_1",
+                              "operationId": "ConvertFile",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                            },
+                            "parameters": {
+                              "id": "@outputs('Create_file:_Temp_HTML_File')?['body/Id']",
+                              "type": "PDF"
+                            },
+                            "authentication": {
+                              "type": "Raw",
+                              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                            }
+                          }
+                        },
+                        "Set_variable:_PDF_Content": {
+                          "runAfter": {
+                            "Convert_file:_Temp_HTML_to_PDF": [
+                              "Succeeded"
+                            ]
+                          },
+                          "metadata": {
+                            "operationMetadataId": "31eef533-6289-4179-a163-e4ca6a7048f9"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "PDF File Content",
+                            "value": "@{dataUri(outputs('Convert_file:_Temp_HTML_to_PDF')?['body'])}"
+                          },
+                          "description": "dataUri(outputs('Convert_file:_Temp_HTML_to_PDF')?['body'])"
+                        }
+                      },
+                      "runAfter": {
+                        "Create_file:_Temp_HTML_File": [
+                          "Succeeded"
+                        ]
+                      },
+                      "else": {
+                        "actions": {
+                          "Compose:_Comment": {
+                            "runAfter": {},
+                            "metadata": {
+                              "operationMetadataId": "96c8f998-f529-46b2-8352-11fb13bd909e"
+                            },
+                            "type": "Compose",
+                            "inputs": "Error, file too big"
+                          }
+                        }
+                      },
+                      "expression": {
+                        "less": [
+                          "@int(outputs('Create_file:_Temp_HTML_File')?['body/Size'])",
+                          2000000
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "dbc9ec97-ffc5-41b6-9532-cd084da19f98"
+                      },
+                      "type": "If"
+                    },
+                    "Delete_file:_Temp_HTML": {
+                      "runAfter": {
+                        "Condition:_In_order_to_convert_a_file_it_must_be_less_than_2MB": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "2aa90a14-7f64-400f-a57b-f49c58159ec5"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_onedriveforbusiness_1",
+                          "operationId": "DeleteFile",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                        },
+                        "parameters": {
+                          "id": "@outputs('Create_file:_Temp_HTML_File')?['body/Id']"
+                        },
+                        "authentication": {
+                          "type": "Raw",
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "ee5d00c1-65b6-4034-9330-8db559b479ce"
+                  },
+                  "type": "Scope",
+                  "description": "We will use a temp HTML file to format all items and then we will convert that to PDF"
+                }
+              },
+              "runAfter": {
+                "Condition:_Body_Content_has_Img_tag,_then_send_to_PDFRocket": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "or": [
+                  {
+                    "equals": [
+                      "@variables('Has Failed')",
+                      "@true"
+                    ]
+                  },
+                  {
+                    "not": {
+                      "contains": [
+                        "@variables('HTML Content')",
+                        "<img"
+                      ]
+                    }
+                  },
+                  {
+                    "not": {
+                      "equals": [
+                        "@outputs('HTTP_POST_to_PDFRocket')['statusCode']",
+                        200
+                      ]
+                    }
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "095241f3-65cf-425e-9271-77bff9e5b464"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Set_variable:_HTML_Content": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "edd3fda7-3e89-4de6-a3ed-83ec9ef01f1d"
+          },
+          "type": "Scope"
+        },
+        "Set_variable:_HTML_Content": {
+          "runAfter": {
+            "Compose:_Idea_on_Fixing_Attachments_Size_Limits": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c5dd5009-4c56-4333-9130-f41ad675c2a5"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "HTML Content",
+            "value": "@{variables('HTML Doc Ceiling')}<body>@{variables('HTML Body Content')}</body>@{variables('HTML Doc Floor')}"
+          }
+        },
+        "Compose:_Idea_on_Fixing_Attachments_Size_Limits": {
+          "runAfter": {
+            "Scope:_Add_Email_Properties_to_Email_HTML_text": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "24424e76-4491-43f1-8dc4-df06522837e1"
+          },
+          "type": "Compose",
+          "inputs": "We can zip attachments and create a data link for the ZIP file so the user can download all attachments directly from the PDF"
+        },
+        "Scope:_Add_Email_Properties_to_Email_HTML_text": {
+          "actions": {
+            "Set_variable:_Temp_String,_Attach_Email_Info_to_Email_Body": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "60b45f54-4cef-4bbc-b9b7-bc36a956172d"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Temp String",
+                "value": "<h1>@{variables('email subject')}</h1>\n</hr>\n<p><b>Received:</b> @{variables('email received dateTime')}</p>\n<p><b>To:</b> @{variables('email to')}</p>\n<p><b>From:</b> @{variables('email from')}</p>\n<p><b>Attachments: </b> @{length(variables('email attachments'))}</p>\n<p>Due to size limitations we do not embed attachments into the PDF, to see attchments please use this information to find the email in your inbox</p>\n</br>\n<p>@{body('Parse_JSON:_Get_Email_Object_JSON')?['bodyPreview']}</p>\n</hr>\n@{variables('HTML Body Content')}"
+              },
+              "description": "intermediate step since self-referencing is not supported in power automate"
+            },
+            "Set_variable:_HTML_Body_Content": {
+              "runAfter": {
+                "Set_variable:_Temp_String,_Attach_Email_Info_to_Email_Body": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "c2ecb47a-c31f-432c-aca0-fbe9ab28ed4c"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "HTML Body Content",
+                "value": "@variables('Temp String')"
+              }
+            }
+          },
+          "runAfter": {
+            "Scope:_Define_Document_Sections": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "88427e81-3d48-4454-b221-59cd78c68dc5"
+          },
+          "type": "Scope"
+        },
+        "Scope:_Define_Document_Sections": {
+          "actions": {
+            "Compose:_Define_Initial_Document": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "f67c24f4-7cb0-40de-be85-4f873ccf18fd"
+              },
+              "type": "Compose",
+              "inputs": "Breakup the email into 3 main parts so we can append/preppend info to body and place the ceilking and floor back on after inserting more info. \nAnalogy: Imagine you are making a snadwich and want to add an ingredient. You would take the bread off and put the ingredient inside and then put the bread back on. The ceiling and the floor are the bread and the body is the sandwich ingredients. We break it up so we can add more info to the body in the next steps. "
+            },
+            "Scope:_Define_Document_Ceiling": {
+              "actions": {
+                "Condition:_Is_HTML_=_true,_then_use_the_header_provided._Else,_define_one": {
+                  "actions": {
+                    "Compose:_isHTML=true,_then_parse_out_the_doc_ceiling_from_email_body": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "51129f38-6e07-425b-aba5-3d0ac2aff66d"
+                      },
+                      "type": "Compose",
+                      "inputs": "lf the email is already in HTML format, then we will use that header. We will split on <body> and take the first option"
+                    },
+                    "Set_variable:_HTML_Doc_Ceiling_Top_=_Email_HTML_top": {
+                      "runAfter": {
+                        "Compose:_isHTML=true,_then_parse_out_the_doc_ceiling_from_email_body": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "92a02c12-b062-457f-a654-afe2c22018d4"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "HTML Doc Ceiling",
+                        "value": "@{first(split(variables('email body'),'<body'))}"
+                      },
+                      "description": "first(split(variables('email body'),'<body'))"
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {
+                      "Compose:_isHTML_=_False,_then_define_the_doc_ceiling": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "6da2a07a-eea6-4704-b924-47864096e5a9"
+                        },
+                        "type": "Compose",
+                        "inputs": "There is not HTML defined so we must define the part above the <body> tag"
+                      },
+                      "Set_variable:_HTML_Doc_Ceiling_=_html_tags": {
+                        "runAfter": {
+                          "Compose:_isHTML_=_False,_then_define_the_doc_ceiling": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "862d2994-1f6d-46fc-8a50-292eefde29e6"
+                        },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "HTML Doc Ceiling",
+                          "value": "<!DOCTYPE html>\n<html>\n<head>\n<style>\n</style>\n</head>"
+                        }
+                      }
+                    }
+                  },
+                  "expression": {
+                    "equals": [
+                      "@variables('email isHTML')",
+                      "@true"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "103d3cb7-aa62-4e3d-b3e3-66301da517d7"
+                  },
+                  "type": "If"
+                }
+              },
+              "runAfter": {
+                "Compose:_Define_Initial_Document": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "d3c0a618-9e1c-4537-93c1-0ce7b8d46fe0"
+              },
+              "type": "Scope",
+              "description": "Define the section of the file above the <body> tag"
+            },
+            "Scope:_Define_Document_Floor": {
+              "actions": {
+                "Condition:_Is_HTML_=_true,_then_use_the_footer_provided._Else,_define_one": {
+                  "actions": {
+                    "Compose:_isHTML=true,_then_parse_out_the_doc_floor_from_email_body": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "cf4e4744-7da4-4cae-b545-de2e796c2f25"
+                      },
+                      "type": "Compose",
+                      "inputs": "lf the email is already in HTML format, then we will use that footer. We will split on </body> and take the last option"
+                    },
+                    "Set_variable:_HTML_Doc_Floor_=_Email_HTML_floor": {
+                      "runAfter": {
+                        "Compose:_isHTML=true,_then_parse_out_the_doc_floor_from_email_body": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "ab398280-469e-4069-bb98-2b4ceff138a1"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "HTML Doc Floor",
+                        "value": "@{last(split(variables('email body'), '</body>'))}"
+                      },
+                      "description": "last(split(variables('email body'), '</body>'))"
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {
+                      "Compose:_isHTML_=_False,_then_define_the_doc_floor": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "ae704e4c-fc08-444b-abf6-38b8c5e27a33"
+                        },
+                        "type": "Compose",
+                        "inputs": "There is not HTML defined so we must define the part below the </body> tag"
+                      },
+                      "Set_variable:_HTML_Doc_Floor_=_html_tags": {
+                        "runAfter": {
+                          "Compose:_isHTML_=_False,_then_define_the_doc_floor": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "44bbec02-34e1-4247-87ad-d10a94fdb0b5"
+                        },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "HTML Doc Floor",
+                          "value": "</html>"
+                        }
+                      }
+                    }
+                  },
+                  "expression": {
+                    "equals": [
+                      "@variables('email isHTML')",
+                      "@true"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c194e67d-0a01-41da-8ea7-9a1270eed660"
+                  },
+                  "type": "If"
+                }
+              },
+              "runAfter": {
+                "Compose:_Define_Initial_Document": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "e748e378-e4f4-49b0-834f-7b317617625a"
+              },
+              "type": "Scope",
+              "description": "Define the section of the document below the </body> tag"
+            },
+            "Scope:_Define_Document_Body": {
+              "actions": {
+                "Condition:_Is_HTML_=_true,_then_use_the_body_provided._Else,_define_one": {
+                  "actions": {
+                    "Compose:_isHTML=true,_then_parse_out_the_doc_body_from_email_body": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "e1142c85-ec0d-40e2-9e86-e611fb013e6c"
+                      },
+                      "type": "Compose",
+                      "inputs": "lf the email is already in HTML format, then we will use that body. We parse the email body from the email html "
+                    },
+                    "Set_variable:_HTML_Doc_Body_=_Email_HTML_body": {
+                      "runAfter": {
+                        "Compose:_isHTML=true,_then_parse_out_the_doc_body_from_email_body": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "45df72bb-976b-4d05-8511-4725c55e6fc4"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "HTML Body Content",
+                        "value": "@{join(skip(split(first(split(last(split(variables('email body'), '<body')),'</body>')),'>'),1),'>')}"
+                      },
+                      "description": "join(skip(split(first(split(last(split(variables('email body'), '<body')),'</body>')),'>'),1),'>')"
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {
+                      "Compose:_isHTML_=_False,_then_define_the_doc_body": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "7ddea53d-b8cc-451a-8b64-a5b173214f91"
+                        },
+                        "type": "Compose",
+                        "inputs": "There is not HTML defined so we must define the part in the body tag"
+                      },
+                      "Set_variable:_HTML_Doc_Body_=_html_tags_": {
+                        "runAfter": {
+                          "Compose:_isHTML_=_False,_then_define_the_doc_body": [
+                            "Succeeded"
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "17f00730-77b8-4adb-a592-ab35af3be4e8"
+                        },
+                        "type": "SetVariable",
+                        "inputs": {
+                          "name": "HTML Body Content",
+                          "value": "@variables('email body')"
+                        }
+                      }
+                    }
+                  },
+                  "expression": {
+                    "equals": [
+                      "@variables('email isHTML')",
+                      "@true"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "5ddf50c3-a05d-4296-91d2-b3fabf25875d"
+                  },
+                  "type": "If"
+                }
+              },
+              "runAfter": {
+                "Compose:_Define_Initial_Document": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "e480910b-2d73-4708-8bf7-2f2ee29c6875"
+              },
+              "type": "Scope"
+            }
+          },
+          "runAfter": {
+            "Set_variable:_Has_Failed_:=_false,_Reset": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d51289f9-6e95-4f3c-bcfe-7c3338e543f0"
+          },
+          "type": "Scope"
+        },
+        "Set_variable:_Has_Failed_:=_false,_Reset": {
+          "runAfter": {
+            "Scope:_Create_UID_-_Unique_name_for_output_file_based_on_current_datetime": [
+              "Succeeded"
+            ],
+            "Scope:_Set_Properties": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ab91fc3b-7622-4bf4-b57c-ce5b91d2d5f0"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "Has Failed",
+            "value": "@false"
+          }
+        },
+        "Compose:_Initialize_Trigger_Inputs": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9b92f80b-ac11-42f2-bf78-fb9d62db9e23"
+          },
+          "type": "Compose",
+          "inputs": "Email String used in:\n- Scope: Set Properties\n\nTemp Path used in: \n- Save PDF/ Condition: Body has No Img Tag OR RocketPDF POST Failed / Scope: Save HTML Content as PDF at provided path \n- Scope: Validate Path"
+        },
+        "Initialize_variable:_RocketPDF_Api_Key": {
+          "runAfter": {
+            "Initialize_variable:_Temp_File_Name_(no_ext)": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c5476e8b-a6f1-43d5-9ed5-ba76b00e2fdd"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "RocketPDF Api Key",
+                "type": "string",
+                "value": "@body('Run_a_Child_Flow')?['rocket_pdf_api_key']"
+              }
+            ]
+          }
+        },
+        "Run_a_Child_Flow": {
+          "runAfter": {
+            "Compose:_📢__DEFINITION": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0ed866c4-d920-4aa3-879b-df3e5894f74c"
+          },
+          "type": "Workflow",
+          "inputs": {
+            "host": {
+              "workflowReferenceName": "d2d25316-5409-ee11-8f6e-000d3a0a1cb3"
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

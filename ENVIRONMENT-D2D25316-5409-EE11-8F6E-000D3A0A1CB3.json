@@ -1,0 +1,83 @@
+{
+  "properties": {
+    "connectionReferences": {},
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "b3090400-185a-489f-9f92-c3e84071fbb9"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Compose:_Variable_Descriptions": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "e5397053-d860-4c42-8f5b-3929c6fd5e9b"
+          },
+          "type": "Compose",
+          "inputs": "## Rocket PDF API Key\n--------------------------\nIn Save Email as PDF we upload any emails that include images embedded in the email body to RocketPDF. If we are unable to connect to RocketPDf or the conversion fails, then we can still convert the email to PDF but any embedded images would not be visble. \n\n## Temp Folder\n-------------------\nOneDrive folder path where temporary file operations are preformed. The fiolder does not have to be an existing folder, if the folder does not exist then it will be created\n\n## Purge Temp Folder Files After Days\n----------------------------------------------\nA garbage collector flow deletes any files in the Temp Folder after it has been in the folder for the indicated number of days"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose:_Variable_Descriptions": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "3c6b191c-1e29-4216-8159-f025f66e7e68"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "rocket_pdf_api_key": " ",
+              "temp_folder": " ",
+              "purge_temp_folder_files_after_days": " "
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rocket_pdf_api_key": {
+                  "title": "Rocket PDF API Key",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "temp_folder": {
+                  "title": "Temp Folder",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "purge_temp_folder_files_after_days": {
+                  "title": "Purge Temp Folder Files After Days",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

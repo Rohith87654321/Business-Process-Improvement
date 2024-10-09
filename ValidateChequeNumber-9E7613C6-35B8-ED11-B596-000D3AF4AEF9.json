@@ -1,0 +1,451 @@
+{
+  "properties": {
+    "connectionReferences": {},
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "d8ebd4c4-7702-4363-8c23-5e95e5af78f9"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "Extracted Cheque Number",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter your input",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "key-button-date": {
+                  "title": "Date",
+                  "type": "string",
+                  "x-ms-dynamically-added": false
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "fullAddress": {
+                      "title": "Full address",
+                      "type": "string",
+                      "x-ms-dynamically-added": false
+                    },
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "countryOrRegion": {
+                          "title": "Country/Region",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "city": {
+                          "title": "City",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "state": {
+                          "title": "State",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "street": {
+                          "title": "Street",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "postalCode": {
+                          "title": "Postal code",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        }
+                      },
+                      "required": [
+                        "countryOrRegion",
+                        "city",
+                        "state",
+                        "street",
+                        "postalCode"
+                      ]
+                    },
+                    "coordinates": {
+                      "type": "object",
+                      "properties": {
+                        "latitude": {
+                          "title": "Latitude",
+                          "type": "number",
+                          "x-ms-dynamically-added": false
+                        },
+                        "longitude": {
+                          "title": "Longitude",
+                          "type": "number",
+                          "x-ms-dynamically-added": false
+                        }
+                      },
+                      "required": [
+                        "latitude",
+                        "longitude"
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "text",
+                "key-button-date",
+                "location"
+              ]
+            },
+            "headersSchema": {
+              "x-ms-user-name-encoded": {
+                "title": "User name",
+                "type": "string",
+                "format": "byte",
+                "x-ms-dynamically-added": false
+              },
+              "x-ms-user-email-encoded": {
+                "title": "User email",
+                "type": "string",
+                "format": "byte",
+                "x-ms-dynamically-added": false
+              },
+              "x-ms-user-timestamp": {
+                "title": "Timestamp",
+                "type": "string",
+                "x-ms-dynamically-added": false
+              }
+            }
+          }
+        }
+      },
+      "actions": {
+        "Compose:_📢_Flow_Definition": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "159d8a65-1b68-44d9-8476-b99240dc8e1c"
+          },
+          "type": "Compose",
+          "inputs": "PURPOSE\n--------------------\nNormalizes Extracted Cheque Number. Removes zero padding and isolates the numeric value. \n\nINPUTS\n--------------------\nExtracted Cheque Number (string) - raw cheque number value.\n\nOUTPUTS\n--------------------\nCheque Number (string) - normalized cheque number value. \n\nStatus Code (Integer)- Indicates the state of the flow on termination.\n 0: Success\n-1: Invalid trigger variable\n-2: Failure in the normalization process\n\nDEP\n--------------------\nNo dependencies."
+        },
+        "Compose:_Initialize_Trigger_Variables": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8afe1ef8-cf2d-468d-9260-5a0a2504553f"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Trigger Variables"
+        },
+        "Compose:_Initialize_Helper_Varaibles": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "5e9254b7-6c19-4035-acf7-6d44c57d0376"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Helper Varaibles"
+        },
+        "Compose:_Initialize_Output_varaibles": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "92b295aa-57e3-4d59-8565-86a73148e6ba"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Output varaibles"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose:_Output": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e038e75d-cc96-4814-9226-03a5f87fb8e7"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "cheque_number": "@variables('Trigger - Cheque Number')",
+              "status_code": "@{variables('OUTPUT - Status Code')}"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cheque_number": {
+                  "title": "Cheque Number",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status_code": {
+                  "title": "Status Code",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "Compose:_Output": {
+          "runAfter": {
+            "Set_variable:_Status_Code_=_-1_(on_failure)": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a0b8bf96-496b-4056-ab77-9c8d1f33ba5c"
+          },
+          "type": "Compose",
+          "inputs": "Result:@{variables('Trigger - Cheque Number')}\nStatus:@{variables('OUTPUT - Status Code')}"
+        },
+        "Set_variable:_Status_Code_=_-1_(on_failure)": {
+          "runAfter": {
+            "Scope:_Normalize_Cheque_Number": [
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8553cd8b-4f3b-4cb0-97f1-19675730ce64"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "OUTPUT - Status Code",
+            "value": -1
+          }
+        },
+        "Scope:_Normalize_Cheque_Number": {
+          "actions": {
+            "Set_variable:_Temp_String_=_Trim_Cheque_Number": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "1a31f52b-5671-42ec-a358-a1fd01408bc4"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Temp String",
+                "value": "@{trim(toUpper(variables('Trigger - Cheque Number')))}"
+              },
+              "description": "trim(toUpper(variables('Trigger - Cheque Number')))"
+            },
+            "Condition:_Cheque_Number_is_empty": {
+              "actions": {
+                "Set_variable:_Status_Code_=_-1": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "6702d74c-71eb-45e0-96a1-ed4aa1ace915"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "OUTPUT - Status Code",
+                    "value": -1
+                  }
+                }
+              },
+              "runAfter": {
+                "Set_variable:_Cheque_No_=_Remove_Letters_from_Str[String]": [
+                  "Succeeded"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "Set_variable:_Temp_String_=_Cheque_Number_without_0-padding": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "28386442-e764-443c-a021-2f2f2cdeb33d"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Temp String",
+                      "value": "@{formatNumber(float(variables('Trigger - Cheque Number')), '0')}"
+                    },
+                    "description": "formatNumber(float(variables('Trigger - Cheque Number')), '0')"
+                  },
+                  "Set_variable:_Cheque_No__=_Temp_String": {
+                    "runAfter": {
+                      "Set_variable:_Temp_String_=_Cheque_Number_without_0-padding": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "e110ca16-fc99-4eb4-9831-acf36a4ae8e5"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Trigger - Cheque Number",
+                      "value": "@variables('Temp String')"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "equals": [
+                  "@empty(variables('Trigger - Cheque Number'))",
+                  "@true"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "c28a54bd-d829-41e2-95c1-286f1df126de"
+              },
+              "type": "If",
+              "description": "empty(variables('Trigger - Cheque Number')) is_equal_to true"
+            },
+            "Run_a_Child_Flow:🟠_🔴_⚫_🟢_🛠️_Remove_all_Letters_from_String": {
+              "runAfter": {
+                "Set_variable:_Temp_String_=_Trim_Cheque_Number": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "70cd3a9e-6353-4438-8e33-51a16a7bb8f1"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "6cb70239-38b8-ed11-b596-000d3af4aef9"
+                },
+                "body": {
+                  "text": "@variables('Temp String')"
+                }
+              }
+            },
+            "Set_variable:_Cheque_No_=_Remove_Letters_from_Str[String]": {
+              "runAfter": {
+                "Run_a_Child_Flow:_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "8cb34e96-876d-4797-afcd-37ed43e41f1e"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Trigger - Cheque Number",
+                "value": "@body('Run_a_Child_Flow:_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String')?['string']"
+              }
+            },
+            "Run_a_Child_Flow:_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String": {
+              "runAfter": {
+                "Run_a_Child_Flow:🟠_🔴_⚫_🟢_🛠️_Remove_all_Letters_from_String": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "646bffd3-e83e-481d-825c-f8a88ed7e930"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "5aae3541-eade-ed11-a7c6-000d3af4aef9"
+                },
+                "body": {
+                  "text": "@body('Run_a_Child_Flow:🟠_🔴_⚫_🟢_🛠️_Remove_all_Letters_from_String')?['string']"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_-_Status_Code": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Temp_String_": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Trigger_-_Cheque_Number": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8ca0b290-c7e5-4e5e-b989-97312e2f5a15"
+          },
+          "type": "Scope"
+        },
+        "Initialize_variable:_OUTPUT_-_Status_Code": {
+          "runAfter": {
+            "Compose:_Initialize_Output_varaibles": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a2da1f5e-d44c-48a2-96cb-fdca8201de39"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "OUTPUT - Status Code",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_Temp_String_": {
+          "runAfter": {
+            "Compose:_Initialize_Helper_Varaibles": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "19fdfd48-54fa-4a65-b8d4-a75282b9f9cf"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp String",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_Trigger_-_Cheque_Number": {
+          "runAfter": {
+            "Compose:_Initialize_Trigger_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "da5d82ba-78d0-49d4-9ea0-88cb1ece2f81"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger - Cheque Number",
+                "type": "string",
+                "value": "@triggerBody()['text']"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

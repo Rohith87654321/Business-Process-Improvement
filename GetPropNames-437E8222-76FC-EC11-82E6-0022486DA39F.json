@@ -1,0 +1,267 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_excelonlinebusiness": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "cr8e1_ExcelScriptConnection"
+        },
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "fc148dfd-93bb-4672-a4f2-1b5d4625ee01"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "Object",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter a stringified JSON object",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_variable:_'Trigger:_Object'": {
+          "runAfter": {
+            "Compose:_Initialize_Trigger_Variables_": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "10534a56-f213-4632-bf96-64ca58ac1de6"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger: Object",
+                "type": "string",
+                "value": "@triggerBody()['text']"
+              }
+            ]
+          },
+          "description": "Object from 'Manually trigger a flow' input"
+        },
+        "Compose:_DEFINITION": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "d010a7f7-870a-42d2-900c-d6cde00af2d0"
+          },
+          "type": "Compose",
+          "inputs": "### Purpose\n\nGets the property names in a JSON object and returns them in a stringified JSON array.\n\n### Inputs\n\nObject (JSON) - A stringified array of property names belonging to the inputted object.\n\n### Outputs\n\n**Prop Names (String [ ])** - A stringified array of property names belonging to the inputted object. If an error occurs then an empty array will be returned.\n\n**Status Code (Integer)** – The status of the flow on termination.\n\n 0: success\n\n-1: property names could not be ascertained.\n\n### Dependencies\n\n**Connection References**\n🔌 Excel Script Connection"
+        },
+        "Initialize_variable:_OUTPUT_Prop_Names": {
+          "runAfter": {
+            "Compose:_Initialize_Output_Variables_": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "85722e09-f9a5-4848-9455-a372e9903ec3"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Prop Names",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "description": "To hold the property names of 'Trigger: Object'"
+        },
+        "Initialize_variable:_OUTPUT_Status_Code": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_Prop_Names": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9e853816-261d-4cf5-a2be-1e2c698e82c9"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Status Code",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "description": "Indicates the status of the flow on termination: 0 then success; -1 then failure."
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose:_OUTPUT": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8f828a3e-484d-4f12-85d0-b5fc11f878fa"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "prop_names": "@{string(variables('Prop Names'))}",
+              "status_code": "@{variables('Status Code')}"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "prop_names": {
+                  "title": "Prop Names",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status_code": {
+                  "title": "Status Code",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "Compose:_Initialize_Trigger_Variables_": {
+          "runAfter": {
+            "Compose:_DEFINITION": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1fb0adab-57a2-42ac-b60b-16b6780d5338"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Trigger Variables "
+        },
+        "Compose:_Initialize_Output_Variables_": {
+          "runAfter": {
+            "Compose:_DEFINITION": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "dcda0d0d-b949-40aa-abff-79884bf92b1f"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Output Variables "
+        },
+        "Compose:_OUTPUT": {
+          "runAfter": {
+            "Set_variable:_Prop_Names": [
+              "Succeeded",
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "774f8bdd-a2bd-488a-ac43-53538aaede2a"
+          },
+          "type": "Compose",
+          "inputs": "Status Code: @{variables('Status Code')}\nProp Names: @{variables('Prop Names')}"
+        },
+        "Set_variable:_Status_Code_=_-1": {
+          "runAfter": {
+            "Run_script:_Get_Object_Keys": [
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ad36ef72-dba1-4413-9bc5-577ca8443cf6"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "Status Code",
+            "value": -1
+          }
+        },
+        "Run_script:_Get_Object_Keys": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_Status_Code": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_'Trigger:_Object'": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "01LKSRAJ54VTEOG74WR5C2BCWL2E5VVTUH": "/Power Automate Scripts.xlsx",
+            "operationMetadataId": "09f0920e-9602-4fb4-bea9-81640bcb016b",
+            "tableId": null
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_excelonlinebusiness",
+              "operationId": "RunScriptProd",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+            },
+            "parameters": {
+              "source": "me",
+              "drive": "b!ejnbUIYXZkSV8liQhxO-WJ4Z8TX-OSBAntZBWA7_UNUF_8bx4-_cRrnhasAO8ciG",
+              "file": "01LKSRAJ54VTEOG74WR5C2BCWL2E5VVTUH",
+              "scriptId": "ms-officescript%3A%2F%2Fonedrive_business_itemlink%2F01LKSRAJ7HKWCVMG7U5BFYUTXOVMOQ5POQ",
+              "ScriptParameters/obj": "@variables('Trigger: Object')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Set_variable:_Prop_Names": {
+          "runAfter": {
+            "Set_variable:_Status_Code_=_-1": [
+              "Succeeded",
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "52c855d1-1f15-4c23-8f32-155068263bcb"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "Prop Names",
+            "value": "@json(outputs('Run_script:_Get_Object_Keys')?['body/result'])"
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

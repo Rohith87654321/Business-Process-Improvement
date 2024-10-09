@@ -1,0 +1,517 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_onedriveforbusiness": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "cr8e1_OneDrivePowerAutomateAdminUtility"
+        },
+        "api": {
+          "name": "shared_onedriveforbusiness"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "59cd36a3-9c5e-4838-935a-980f348f932c"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "File Name",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter your input",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "text_1": {
+                  "title": "File Content URI",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter your input",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text",
+                "text_1"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_variable:_Trigger_-_File_Content_Data_URI": {
+          "runAfter": {
+            "Compose:_TODO": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "931a7f3a-2fde-465e-9eaa-555738756057"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "File Content Data URI",
+                "type": "string",
+                "value": "@triggerBody()['text_1']"
+              }
+            ]
+          },
+          "description": "File content for file to convert to PDF"
+        },
+        "Initialize_variable:_OUTPUT_-_Status_Code": {
+          "runAfter": {
+            "Compose:_TODO": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fc54ff66-32e2-45d8-a70b-26b6d151e680"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Status Code",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "description": "Indicates the status of the flow on termination"
+        },
+        "Initialize_variable:_OUTPUT_-_PDF_Content_Data_URI": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_-_Status_Code": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8454e13b-b0d9-4699-8c8e-4979227ac637"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "PDF Content Data URI",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "The file as a pdf. Empty if action failed"
+        },
+        "Initialize_variable:_Trigger_-_File_Name": {
+          "runAfter": {
+            "Initialize_variable:_Trigger_-_File_Content_Data_URI": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "66896a10-c3cb-4801-ac81-158ea089190c"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "File Name",
+                "type": "string",
+                "value": "@triggerBody()['text']"
+              }
+            ]
+          },
+          "description": "Name of the file to convert to PDF. Include ext"
+        },
+        "Initialize_variable:_Unique_File_Name": {
+          "runAfter": {
+            "Initialize_variable:_Trigger_-_File_Name": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e8ecb498-1ae2-4492-af38-9ab5391c62e7"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Unique File Name",
+                "type": "string",
+                "value": "@{concat('CopyFileAsPDF_',formatDateTime(utcNow(),'ddMMyyyyHHmmssfffffff'),'_',variables('File Name'))}"
+              }
+            ]
+          },
+          "description": "concat('CopyFileAsPDF_',formatDateTime(utcNow(),'ddMMyyyyHHmmssfffffff'),'_',variables('File Name'))"
+        },
+        "Condition:_Document_is_PDF": {
+          "actions": {
+            "Respond_to_a_PowerApp_or_flow:_Return_Input": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "61135477-22da-44ad-bdff-f7f97a65ab9f"
+              },
+              "type": "Response",
+              "kind": "PowerApp",
+              "inputs": {
+                "statusCode": 200,
+                "body": {
+                  "pdf_data_uri": "@variables('File Content Data URI')",
+                  "status_code": "@{variables('Status Code')}"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pdf_data_uri": {
+                      "title": "PDF Data URI",
+                      "x-ms-dynamically-added": true,
+                      "type": "string"
+                    },
+                    "status_code": {
+                      "title": "Status Code",
+                      "x-ms-dynamically-added": true,
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Initialize_variable:_Unique_File_Name": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_OUTPUT_-_PDF_Content_Data_URI": [
+              "Succeeded"
+            ]
+          },
+          "else": {
+            "actions": {
+              "Respond_to_a_PowerApp_or_flow:_Return_PDF_Version": {
+                "runAfter": {
+                  "Compose": [
+                    "Succeeded",
+                    "TimedOut",
+                    "Skipped",
+                    "Failed"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "e6ac87d7-2f5d-413f-a4e0-8e480ae64d01"
+                },
+                "type": "Response",
+                "kind": "PowerApp",
+                "inputs": {
+                  "statusCode": 200,
+                  "body": {
+                    "pdf_data_uri": "@{dataUri(outputs('Convert_file')?['body'])}",
+                    "status_code": "@{variables('Status Code')}"
+                  },
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "pdf_data_uri": {
+                        "title": "PDF Data URI",
+                        "x-ms-dynamically-added": true,
+                        "type": "string"
+                      },
+                      "status_code": {
+                        "title": "Status Code",
+                        "x-ms-dynamically-added": true,
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "description": "dataUri(outputs('Convert_file')?['body'])"
+              },
+              "Condition:_Create_Temp_File_if_no_failures": {
+                "actions": {
+                  "Create_file:_Create_Temp_FIle": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "4592880a-de76-4ed0-9848-237cd5a3e2ee"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_onedriveforbusiness",
+                        "operationId": "CreateFile",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                      },
+                      "parameters": {
+                        "folderPath": "@body('Run_a_Child_Flow')?['temp_folder']",
+                        "name": "@variables('Unique File Name')",
+                        "body": "@decodeDataUri(variables('File Content Data URI'))"
+                      },
+                      "authentication": {
+                        "type": "Raw",
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                      },
+                      "retryPolicy": {
+                        "type": "exponential",
+                        "count": 5,
+                        "interval": "PT1M",
+                        "minimumInterval": "PT10S",
+                        "maximumInterval": "PT1H"
+                      }
+                    },
+                    "runtimeConfiguration": {
+                      "contentTransfer": {
+                        "transferMode": "Chunked"
+                      }
+                    }
+                  },
+                  "Set_variable:_Status_Code_=_-1": {
+                    "runAfter": {
+                      "Create_file:_Create_Temp_FIle": [
+                        "Failed"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "2ae35a22-f134-4bfd-8a54-0be1ad31977e"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Status Code",
+                      "value": -1
+                    }
+                  }
+                },
+                "runAfter": {},
+                "expression": {
+                  "equals": [
+                    "@variables('Status Code')",
+                    0
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "bed140e0-9f31-4d92-b841-d8650c59fb27"
+                },
+                "type": "If"
+              },
+              "Condition:_Convert_File_if_No_Failures": {
+                "actions": {
+                  "Convert_file": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "4afd1dbf-cf88-4a14-8b5c-11f9710a0547"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_onedriveforbusiness",
+                        "operationId": "ConvertFile",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                      },
+                      "parameters": {
+                        "id": "@outputs('Create_file:_Create_Temp_FIle')?['body/Id']",
+                        "type": "PDF"
+                      },
+                      "authentication": {
+                        "type": "Raw",
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                      },
+                      "retryPolicy": {
+                        "type": "exponential",
+                        "count": 5,
+                        "interval": "PT1M",
+                        "minimumInterval": "PT10S",
+                        "maximumInterval": "PT1H"
+                      }
+                    }
+                  },
+                  "Set_variable:_STatus_Code_=_-2": {
+                    "runAfter": {
+                      "Convert_file": [
+                        "Failed"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "594c1df5-2841-4305-a0e1-c6c2f30ea22c"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Status Code",
+                      "value": -2
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Condition:_Create_Temp_File_if_no_failures": [
+                    "Failed",
+                    "Succeeded",
+                    "Skipped",
+                    "TimedOut"
+                  ]
+                },
+                "expression": {
+                  "equals": [
+                    "@variables('Status Code')",
+                    0
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "21096801-414e-45a8-88b9-3d2813db27c1"
+                },
+                "type": "If"
+              },
+              "Condition:_Delete_Temp_File_If_Create_Temp_File_Succeeded": {
+                "actions": {
+                  "Delete_file:_Delete_Temp_File": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "76336e39-b919-4ad2-aebf-850ef9083e33"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_onedriveforbusiness",
+                        "operationId": "DeleteFile",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                      },
+                      "parameters": {
+                        "id": "@outputs('Create_file:_Create_Temp_FIle')?['body/Id']"
+                      },
+                      "authentication": {
+                        "type": "Raw",
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                      },
+                      "retryPolicy": {
+                        "type": "exponential",
+                        "count": 5,
+                        "interval": "PT1M",
+                        "minimumInterval": "PT10S",
+                        "maximumInterval": "PT1H"
+                      }
+                    }
+                  },
+                  "Set_variable:_Status_Code__=_-3": {
+                    "runAfter": {
+                      "Delete_file:_Delete_Temp_File": [
+                        "Failed"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "5f634fa3-3ee3-4436-8f26-41da3aedf7ff"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Status Code",
+                      "value": -3
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Condition:_Convert_File_if_No_Failures": [
+                    "Failed",
+                    "Succeeded",
+                    "TimedOut",
+                    "Skipped"
+                  ]
+                },
+                "expression": {
+                  "not": {
+                    "equals": [
+                      "@variables('Status Code')",
+                      -1
+                    ]
+                  }
+                },
+                "metadata": {
+                  "operationMetadataId": "2622e926-2cc2-40a7-a99e-e6fdd1cfa5fc"
+                },
+                "type": "If"
+              },
+              "Compose": {
+                "runAfter": {
+                  "Condition:_Delete_Temp_File_If_Create_Temp_File_Succeeded": [
+                    "Succeeded",
+                    "TimedOut",
+                    "Skipped",
+                    "Failed"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "d3585c08-9993-44a2-8e68-a3fb7ed3c2db"
+                },
+                "type": "Compose",
+                "inputs": "Data URI: @{dataUri(outputs('Convert_file')?['body'])}\nStatus Code @{variables('Status Code')}"
+              }
+            }
+          },
+          "expression": {
+            "equals": [
+              "@contains(toUpper(last(split(variables('File Name'),'.'))),'PDF')",
+              "@true"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fbaecc6e-3480-4d64-acbb-72a6c60a83eb"
+          },
+          "type": "If",
+          "description": "contains(toUpper(last(split(variables('File Name'),'.'))),'PDF')"
+        },
+        "Compose:_TODO": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d3000eb0-4ec4-471d-b484-b0c85dc22ef6"
+          },
+          "type": "Compose",
+          "inputs": " "
+        },
+        "Compose:_📢__Flow_DEFINITION": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "b38d1e77-911d-4d92-933c-cc5f16c59a4e"
+          },
+          "type": "Compose",
+          "inputs": "### Purpose\nConverts a file to PDF format and returns the new content as a data URI. \n\n### Inputs\n**File Name*(String)*** – Name of the file to convert. Include the extension.\n\n**File Content URI*(dataURI)*** – File content to convert to PDF\n\n### Outputs\n**Status Code *(Integer)*** - Indicates the status of the flow on termination\n 0: success\n-1: Invalid Trigger Inputs\n-2: Cannot convert content of this type.\n-3: Temp Files could not be removed\n\n### Dependencies\n**Connection References**\n\n🔌 🛠️ PowerAutomate Admin Utility: OneDrive Connection\n"
+        },
+        "Run_a_Child_Flow": {
+          "runAfter": {
+            "Compose:_📢__Flow_DEFINITION": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "35360a05-3c2e-402f-82f4-8581050dcad9"
+          },
+          "type": "Workflow",
+          "inputs": {
+            "host": {
+              "workflowReferenceName": "d2d25316-5409-ee11-8f6e-000d3a0a1cb3"
+            }
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": "f3a14ff079cc4092a2b84f03c0800224"
+  },
+  "schemaVersion": "1.0.0.0"
+}

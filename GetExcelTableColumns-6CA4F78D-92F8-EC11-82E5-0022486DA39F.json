@@ -1,0 +1,899 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_onedriveforbusiness_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "cr8e1_OneDrivePowerAutomateAdminUtility"
+        },
+        "api": {
+          "name": "shared_onedriveforbusiness"
+        }
+      },
+      "shared_excelonlinebusiness_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "cr8e1_ExcelPowerAutomateAdminUtility"
+        },
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "45d546d5-a2d2-4987-ae1d-b97372da942c"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "File Data Uri",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "dataUri( {$content, $content-type} )",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "text_4": {
+                  "title": "Table Name",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter the name of the table to fetch columns for",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text_4"
+              ]
+            }
+          },
+          "description": "Fetch columns from a table provided name and file"
+        }
+      },
+      "actions": {
+        "Initialize_variable:_Temp": {
+          "runAfter": {
+            "Compose:_Initialize_Helper_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b61a6df8-d7e2-4433-aba5-bd4dad0f9442"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "Temp variable. Used for intermediate operations on variables."
+        },
+        "Initialize_variable:_Success": {
+          "runAfter": {
+            "Initialize_variable:_Temp_String": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "2ce98fe9-73a0-4bcc-a2ab-0652599b3901"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Success",
+                "type": "boolean",
+                "value": "@false"
+              }
+            ]
+          },
+          "description": "Temp value. Used to save the outcomes of simple Boolean operation to be used only briefly"
+        },
+        "Initialize_variable:_Table_Content": {
+          "runAfter": {
+            "Initialize_variable:_Success": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d51bdfd2-9fc8-43b3-9e49-582ee48b04b3"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Table Content",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "description": "If the Table exists, then the  table content will be saved here"
+        },
+        "Compose:_DEFINITION": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "bcf11ac9-2ffc-4d24-bba9-f6e049456db4"
+          },
+          "type": "Compose",
+          "inputs": "### Purpose\nGets a stringified JSON array populated with the names of the columns in an Excel Table\nthat has been located with the given inputs.\n\n### Inputs\n**File Data Uri (dataUri)** - The file content of the excel document to analyze.\n\n**Table Name (string)** - A string representing the table's name.\n\n### Outputs\n**Table Columns (String [ ])** - A stringified JSON array of names of columns found in the table at the given parameters.\n\n**Status Code (Integer)** – The status of the flow on termination.\n 0: indicates success.\n-1: indicates an error: could not create temp reference file.\n-2: indicates failure in child flow **🛠️ Get Prop Names**\n-3: indicates an error: No Table with Table Name provided.\n-4: The table is empty. When the table is empty, we cannot fetch columns.\n-5: Indicates an error: invalid dataUri\n\n### Dependencies\n\n*****Child Flows****\n🛠️ Get Prop Names\n\n*****Connection References****\n🔌 🛠️ PowerAutomate Admin Utility: Excel Connection\n🔌 🛠️ PowerAutomate Admin Utility: OneDrive Connection"
+        },
+        "Compose:_Initialize_Trigger_Variables": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1190c7d2-0960-4d1e-a86c-69fd26799702"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Trigger Variables"
+        },
+        "Initialize_variable:_Trigger:_Table_Name": {
+          "runAfter": {
+            "Initialize_variable:_Trigger:_File_Data_URI": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f5c5abeb-2bcc-4007-92b6-9e44cb7a03d2"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger: Table Name",
+                "type": "string",
+                "value": "@triggerBody()['text_4']"
+              }
+            ]
+          },
+          "description": "From \"Manually Trigger a flow\" Indicates the name of the table to fetch rows from"
+        },
+        "Compose:_Compose:_Initialize_Output_Variables": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e0a6324a-c2d2-4cdc-9f59-0ba3e8bf4f46"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Compose: Initialize Output Variables"
+        },
+        "Initialize_variable:_OUTPUT:_Columns": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_-_Status_Code": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7f83d2a5-2271-437c-a3af-3e3b990c1d1f"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Columns",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "description": "Output value. Column names of the Excel Table"
+        },
+        "Initialize_variable:_OUTPUT_-_Status_Code": {
+          "runAfter": {
+            "Compose:_Compose:_Initialize_Output_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "118cd021-6963-4467-97d6-74523c4e1764"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Status Code",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "Compose:_Initialize_Helper_Variables": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "5bc847be-2e55-486a-82e3-2a559d9c6842"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Helper Variables"
+        },
+        "Initialize_variable:_Temp_String": {
+          "runAfter": {
+            "Initialize_variable:_Temp": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "cbd1ed42-63bc-4a30-95dc-286bf6754a96"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp String",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "Initialize_variable:_Trigger:_File_Data_URI": {
+          "runAfter": {
+            "Compose:_Initialize_Trigger_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f18c0ce6-0752-4efb-b67a-57bde7782e5a"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "File Data Uri",
+                "type": "string",
+                "value": "@triggerBody()?['text']"
+              }
+            ]
+          }
+        },
+        "Compose:_Initialize_Variables_Used_to_Create_Temp_File": {
+          "runAfter": {
+            "Run_a_Child_Flow": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f3943130-2355-4814-8e40-860e2431058d"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Variables Used to Create Temp File"
+        },
+        "Initialize_variable:_Temp_File_Name": {
+          "runAfter": {
+            "Convert_time_zone": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "196de7d8-52a0-4026-aa22-efab39f01044"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp File Name",
+                "type": "string",
+                "value": "@{body('Convert_time_zone')}_GetExcelColumns.xlsx"
+              }
+            ]
+          },
+          "description": "Formatted Trigger: File Name. "
+        },
+        "Initialize_variable:_Path": {
+          "runAfter": {
+            "Initialize_variable:_Temp_File_Name": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "68610a77-1dfe-433b-9996-b377360df39d"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Path",
+                "type": "string",
+                "value": "@body('Run_a_Child_Flow')?['temp_folder']"
+              }
+            ]
+          },
+          "description": "Formatted Trigger: Path"
+        },
+        "Initialize_variable:_Normalized_Table_Name": {
+          "runAfter": {
+            "Initialize_variable:_Trigger:_Table_Name": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "dc96116c-2532-444b-8e96-1628cb621405"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Table Name",
+                "type": "string",
+                "value": "@{trim(variables('Trigger: Table Name'))}"
+              }
+            ]
+          },
+          "description": "Formatted Trigger: Table Name"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose:_OUTPUTS": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9a8de31d-a340-4dc4-b222-9b2c0c62307f"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "columns": "@{string(variables('Columns'))}",
+              "status": "@variables('Status Code')"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "columns": {
+                  "title": "columns",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status": {
+                  "title": "status",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "Compose:_OUTPUTS": {
+          "runAfter": {
+            "Scope:_Delete_Temp_Reference_File": [
+              "Succeeded",
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "af2e8a82-e0d6-4028-bb96-693af7d895c2"
+          },
+          "type": "Compose",
+          "inputs": "columns: @{variables('Columns')}\nstatus: @{variables('Status Code')}"
+        },
+        "Scope:_Create_Temp_Reference_File": {
+          "actions": {
+            "Condition:_Status_Code_=_0,_Previous_Step_Succeeded_": {
+              "actions": {
+                "Create_file:_Temp_File": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "0b7be385-a795-4146-ab23-a572ad6d3f28"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_onedriveforbusiness_1",
+                      "operationId": "CreateFile",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                    },
+                    "parameters": {
+                      "folderPath": "@variables('Path')",
+                      "name": "@variables('Temp File Name')",
+                      "body": "@decodeDataUri(variables('File Data Uri'))"
+                    },
+                    "authentication": {
+                      "type": "Raw",
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                    }
+                  },
+                  "description": "decodeDataUri(variables('File Data Uri'))",
+                  "runtimeConfiguration": {
+                    "contentTransfer": {
+                      "transferMode": "Chunked"
+                    }
+                  }
+                },
+                "Set_variable:_Status_Code_=_-1": {
+                  "runAfter": {
+                    "Create_file:_Temp_File": [
+                      "Failed"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "a006f554-7c33-4de9-a5d2-9855287551e2"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Status Code",
+                    "value": -1
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "equals": [
+                  "@variables('Status Code')",
+                  0
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "da933628-a503-428b-b935-ccf2f8842147"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Scope:_Validate_Trigger_Variables_-_Ensure_Valid_Data_URI": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "842abb65-5b6e-4b8f-be00-b23c5e4792b8"
+          },
+          "type": "Scope"
+        },
+        "Scope:_Validate_Trigger_Variables_-_Ensure_Valid_Data_URI": {
+          "actions": {
+            "Compose:_Try_Decode_Data_Uri": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "8ec07e01-c957-4b5b-95c2-9324cab49827"
+              },
+              "type": "Compose",
+              "inputs": "@decodeDataUri(variables('File Data Uri'))",
+              "description": "decodeDataUri(variables('File Data Uri'))"
+            },
+            "Set_variable:_Status_Code_=_-5": {
+              "runAfter": {
+                "Compose:_Try_Decode_Data_Uri": [
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a3a4ced4-17e3-4f64-98dc-2f812f45496a"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Status Code",
+                "value": -5
+              }
+            },
+            "Condition:_Data_Uri_is_the_correct_media_type": {
+              "actions": {},
+              "runAfter": {
+                "Set_variable:_Status_Code_=_-5": [
+                  "Succeeded",
+                  "Failed",
+                  "TimedOut",
+                  "Skipped"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "Set_variable:_Status_Code_:=_-5,_incorrect_media_type": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "2cf2c919-0cc3-419c-bf8c-41ba0297e8b9"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Status Code",
+                      "value": -5
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "contains": [
+                  "@variables('File Data Uri')",
+                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "92932dae-6fdd-4e40-bc05-8ea4184405f1"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Initialize_variable:_OUTPUT:_Columns": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Table_Content": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Normalized_Table_Name": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Path": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "43c7cc7e-d145-4f93-b8bb-91eb6825dfcd"
+          },
+          "type": "Scope"
+        },
+        "Scope:_Get_Column_Names": {
+          "actions": {
+            "Condition:_Status_Code_is_zero,_then_get_col_names_": {
+              "actions": {
+                "Set_variable:_Status_Code_=_-3": {
+                  "runAfter": {
+                    "List_rows_present_in_a_table": [
+                      "Failed"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "7b7fe7ae-5a9c-4196-bcca-270b919755c2"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Status Code",
+                    "value": -3
+                  }
+                },
+                "Condition:_There_are_Table_Contents": {
+                  "actions": {
+                    "Run_a_Child_Flow:_Get_Prop_Names": {
+                      "runAfter": {
+                        "Set_variable:_Temp,_stringifiy_first_row_of_Excel_column": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "ec681bc2-034d-4378-b63c-96ed7d0b8c87"
+                      },
+                      "type": "Workflow",
+                      "inputs": {
+                        "host": {
+                          "workflowReferenceName": "437e8222-76fc-ec11-82e6-0022486da39f"
+                        },
+                        "body": {
+                          "text": "@variables('Temp')"
+                        }
+                      }
+                    },
+                    "Parse_JSON_for_First_Row_of_Table": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "f0fcc8b7-4750-49be-8571-16443994dbac"
+                      },
+                      "type": "ParseJson",
+                      "inputs": {
+                        "content": "@outputs('List_rows_present_in_a_table')?['body/value']",
+                        "schema": {
+                          "type": "array"
+                        }
+                      }
+                    },
+                    "Set_variable:_Columns,_Remove_the_first_2_columns._These_are_metadata": {
+                      "runAfter": {
+                        "Run_a_Child_Flow:_Get_Prop_Names": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "5b402c0f-9620-4a37-9d3f-14ddd4477cf2"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "Columns",
+                        "value": "@skip(json(outputs('Run_a_Child_Flow:_Get_Prop_Names')?['Body']?['prop_names']),2)"
+                      },
+                      "description": "skip(json(outputs('Run_a_Child_Flow:_Get_Prop_Names')?['Body']?['prop_names']),2)"
+                    },
+                    "Set_variable:_Temp,_stringifiy_first_row_of_Excel_column": {
+                      "runAfter": {
+                        "Parse_JSON_for_First_Row_of_Table": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "f3e09b1e-0407-4e46-951c-ba2ef6d9fe20"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "Temp",
+                        "value": "@{trim(string(body('Parse_JSON_for_First_Row_of_Table')[0]))}"
+                      }
+                    },
+                    "Condition:_Prop_Names[Status_Code]_!=_0": {
+                      "actions": {
+                        "Set_variable:_Status_Code_=_-2": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "6da76b71-0fa0-4de7-bdc1-3c4d1105c07b"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "Status Code",
+                            "value": -2
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Set_variable:_Columns,_Remove_the_first_2_columns._These_are_metadata": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "not": {
+                          "equals": [
+                            "@int(outputs('Run_a_Child_Flow:_Get_Prop_Names')?['Body']?['status_code'])",
+                            0
+                          ]
+                        }
+                      },
+                      "metadata": {
+                        "operationMetadataId": "3c168b2f-106d-46c8-b42b-aa2d28c75276"
+                      },
+                      "type": "If"
+                    }
+                  },
+                  "runAfter": {
+                    "Set_variable:_Status_Code_=_-3": [
+                      "Succeeded",
+                      "TimedOut",
+                      "Skipped",
+                      "Failed"
+                    ]
+                  },
+                  "else": {
+                    "actions": {
+                      "Condition:_Status_Code__=_0,_then_table_is_empty": {
+                        "actions": {
+                          "Set_variable:_Status_Code_=_4": {
+                            "runAfter": {},
+                            "metadata": {
+                              "operationMetadataId": "ad8ffeaf-9def-4ba9-9eca-fec2717b7fbd"
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "Status Code",
+                              "value": 4
+                            }
+                          }
+                        },
+                        "runAfter": {},
+                        "expression": {
+                          "equals": [
+                            "@variables('Status Code')",
+                            0
+                          ]
+                        },
+                        "metadata": {
+                          "operationMetadataId": "0b888642-10bc-4e30-85cb-3585a1a273c3"
+                        },
+                        "type": "If"
+                      }
+                    }
+                  },
+                  "expression": {
+                    "and": [
+                      {
+                        "greater": [
+                          "@length(outputs('List_rows_present_in_a_table')?['body/value'])",
+                          0
+                        ]
+                      },
+                      {
+                        "equals": [
+                          "@variables('Status Code')",
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "eaeb887c-1eae-41af-9b31-93dd419d0295"
+                  },
+                  "type": "If",
+                  "description": "length(outputs('List_rows_present_in_a_table')?['body/value'])"
+                },
+                "List_rows_present_in_a_table": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "c88fe89c-05a8-4a9f-9998-c20170ab5d67",
+                    "tableId": "@trim(variables('Table Name'))"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_excelonlinebusiness_1",
+                      "operationId": "GetItems",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness"
+                    },
+                    "parameters": {
+                      "source": "me",
+                      "drive": "b!nuSvKpLRikaqjcYcJ1Y9_sYDHGllwJpBu8upwX1MNGwmguHn2bveTLbY3nz98PGD",
+                      "file": "@outputs('Create_file:_Temp_File')?['body/Id']",
+                      "table": "@trim(variables('Table Name'))"
+                    },
+                    "authentication": {
+                      "type": "Raw",
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                    }
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "equals": [
+                  "@variables('Status Code')",
+                  0
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "08973822-90d4-448a-9c1e-fd6c46a26ce6"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Scope:_Create_Temp_Reference_File": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "02164232-e143-41c2-bddd-692bf6702e82"
+          },
+          "type": "Scope"
+        },
+        "Current_time": {
+          "runAfter": {
+            "Compose:_Initialize_Variables_Used_to_Create_Temp_File": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "fa031665-8074-4ffb-8c5f-82eee8a43654"
+          },
+          "type": "Expression",
+          "kind": "CurrentTime",
+          "inputs": {}
+        },
+        "Convert_time_zone": {
+          "runAfter": {
+            "Current_time": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "01337405-ac8f-4c78-bb9c-6a6ba40a1fdc"
+          },
+          "type": "Expression",
+          "kind": "ConvertTimeZone",
+          "inputs": {
+            "baseTime": "@body('Current_time')",
+            "formatString": "ddMMyyyy_HHmmssfffffff",
+            "sourceTimeZone": "UTC-11",
+            "destinationTimeZone": "Eastern Standard Time"
+          }
+        },
+        "Scope:_Delete_Temp_Reference_File": {
+          "actions": {
+            "Condition:_Status_Code_!=_-1_AND_Status_Code_!=_-5": {
+              "actions": {
+                "Delete_file:_Temp_File": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "49e4a5a3-fe41-4c13-a1ba-0795c2456bc1"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_onedriveforbusiness_1",
+                      "operationId": "DeleteFile",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_onedriveforbusiness"
+                    },
+                    "parameters": {
+                      "id": "@outputs('Create_file:_Temp_File')?['body/Id']"
+                    },
+                    "authentication": {
+                      "type": "Raw",
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                    }
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "and": [
+                  {
+                    "not": {
+                      "equals": [
+                        "@variables('Status Code')",
+                        -1
+                      ]
+                    }
+                  },
+                  {
+                    "not": {
+                      "equals": [
+                        "@variables('Status Code')",
+                        -5
+                      ]
+                    }
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "ce5f5eea-b852-4a54-84e9-eb0e7c864cb6"
+              },
+              "type": "If",
+              "description": "All other status codes results in the creation of the file. -1 indicates file could not be created, -5 indicates trigger failure, this would occour before the file was created. "
+            }
+          },
+          "runAfter": {
+            "Scope:_Get_Column_Names": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d12c1313-6a61-4954-82e3-f464dfbac4e5"
+          },
+          "type": "Scope"
+        },
+        "Run_a_Child_Flow": {
+          "runAfter": {
+            "Compose:_DEFINITION": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "bad1aa3a-263a-425b-ac47-72bcbc58003b"
+          },
+          "type": "Workflow",
+          "inputs": {
+            "host": {
+              "workflowReferenceName": "d2d25316-5409-ee11-8f6e-000d3a0a1cb3"
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

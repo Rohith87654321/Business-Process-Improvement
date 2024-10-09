@@ -1,0 +1,1223 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_regexmatchingip": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "cr8e1_sharedregexmatchingip_40ae8"
+        },
+        "api": {
+          "name": "shared_regexmatchingip"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "85db201c-74a9-4fe3-b1d3-497764dffd25"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "Extracted Date",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Date string",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "text_1": {
+                  "title": "Format",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter your input",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "key-button-date": {
+                  "title": "Date",
+                  "type": "string",
+                  "x-ms-dynamically-added": false
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "fullAddress": {
+                      "title": "Full address",
+                      "type": "string",
+                      "x-ms-dynamically-added": false
+                    },
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "countryOrRegion": {
+                          "title": "Country/Region",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "city": {
+                          "title": "City",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "state": {
+                          "title": "State",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "street": {
+                          "title": "Street",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "postalCode": {
+                          "title": "Postal code",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        }
+                      },
+                      "required": [
+                        "countryOrRegion",
+                        "city",
+                        "state",
+                        "street",
+                        "postalCode"
+                      ]
+                    },
+                    "coordinates": {
+                      "type": "object",
+                      "properties": {
+                        "latitude": {
+                          "title": "Latitude",
+                          "type": "number",
+                          "x-ms-dynamically-added": false
+                        },
+                        "longitude": {
+                          "title": "Longitude",
+                          "type": "number",
+                          "x-ms-dynamically-added": false
+                        }
+                      },
+                      "required": [
+                        "latitude",
+                        "longitude"
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "text",
+                "text_1",
+                "key-button-date",
+                "location"
+              ]
+            },
+            "headersSchema": {
+              "x-ms-user-name-encoded": {
+                "title": "User name",
+                "type": "string",
+                "format": "byte",
+                "x-ms-dynamically-added": false
+              },
+              "x-ms-user-email-encoded": {
+                "title": "User email",
+                "type": "string",
+                "format": "byte",
+                "x-ms-dynamically-added": false
+              },
+              "x-ms-user-timestamp": {
+                "title": "Timestamp",
+                "type": "string",
+                "x-ms-dynamically-added": false
+              }
+            }
+          }
+        }
+      },
+      "actions": {
+        "Compose:_📢_Flow_Definition": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "04c793a9-f80d-4892-958d-b7eb324bea22"
+          },
+          "type": "Compose",
+          "inputs": "PURPOSE\n---------------\nManipulates a date string into a new format. \n\nINPUTS\n---------------\n Extracted Date (string)  - A date string.\n Format (string) - The output format of **Extracted Date**\n\nOUTPUTS\n---------------\n Date (string)  - **Extracted Date** in the format indicated by **Format.**\n\n Status Code (Integer)  - Indicates the state of the flow on termination.\n 0: Success\n-1: Invalid trigger variable(s).\n\nDEP\n---------------\nRegEx Matching (Independent Publisher) Connection"
+        },
+        "Compose:_Initialize_Trigger_Varaibles": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "2eadea76-3847-44ea-a4b5-173587f4adc5"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Trigger Varaibles"
+        },
+        "Initialize_variable:_Trigger_-_Date": {
+          "runAfter": {
+            "Compose:_Initialize_Trigger_Varaibles": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "acb279a6-0be8-4776-945b-edae6a7c2baf"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger - Date",
+                "type": "string",
+                "value": "@triggerBody()['text']"
+              }
+            ]
+          },
+          "description": "Date provided by trigger "
+        },
+        "Initialize_variable:_Trigger_-_Format": {
+          "runAfter": {
+            "Initialize_variable:_Trigger_-_Date": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "72e0fbc7-d0ef-49b3-9a90-8e1b5e403d68"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger - Format",
+                "type": "string",
+                "value": "@triggerBody()['text_1']"
+              }
+            ]
+          }
+        },
+        "Compose:_Init_output_variables": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4dce67dd-eec1-48e2-8bbe-13bd75bcb599"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Init output variables"
+        },
+        "Initialize_variable:_OUTPUT_-_Status_Code": {
+          "runAfter": {
+            "Compose:_Init_output_variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7ca071fd-426a-4f81-bb8b-a43e1f50b512"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "OUTPUT - Status Code",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "description": "Indicates the state of the flow on termination"
+        },
+        "Initialize_variable:_OUTPUT_-_Date": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_-_Status_Code": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "83b1eaf1-638d-4ad5-8391-cd4b92823f0d"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Date",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "Date string in the format indicated by **Format.**"
+        },
+        "Scope:_Validate_date_format": {
+          "actions": {
+            "Compose:_Test_format": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "19686c34-2558-41d5-862a-64d4e99a476c"
+              },
+              "type": "Compose",
+              "inputs": "@formatDateTime('2020-01-31',variables('Trigger - Format'),'en-US')",
+              "description": "formatDateTime('2020-01-31',variables('Trigger - Format'),'en-US')"
+            },
+            "Set_variable:_Status_Code_=_-1_(failure)": {
+              "runAfter": {
+                "Compose:_Test_format": [
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "be83a89a-85c3-42c3-9e0f-c22b24b7705b"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "OUTPUT - Status Code",
+                "value": -1
+              }
+            }
+          },
+          "runAfter": {
+            "Compose:_Validate_Trigger_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d81efb69-485d-4e8d-b89d-9ef68e13c217"
+          },
+          "type": "Scope",
+          "description": "Ensure that the format provided is even valid"
+        },
+        "Compose:_Init_Helper_Variables": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "2a4b23f2-56b3-496e-b953-09584b04d4b2"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Init Helper Variables"
+        },
+        "Initialize_variable:_Temp_String": {
+          "runAfter": {
+            "Compose:_Init_Helper_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "21800909-dab6-47d2-a690-9259aecce2dc"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp String",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "Used for intermediate data operations as Power Automate does not support self-referencing. "
+        },
+        "Compose:_Validate_Trigger_Variables": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_-_Date": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Trigger_-_Format": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Date_String": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ea74f7f9-84ef-433c-a673-c6ce661a7f2a"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Validate Trigger Variables"
+        },
+        "Scope:_Normalize_Date_String": {
+          "actions": {
+            "Scope:_Remove_number_suffixes_from_date": {
+              "actions": {
+                "Set_variable:_Temp_String_-_Remove_st_suffix_for_dates": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "8cf6b74f-1611-4bc2-9590-47bf699af658"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Temp String",
+                    "value": "@{replace(variables('Date String'), 'st', ' ')}"
+                  },
+                  "description": "replace(variables('Date String'), 'st', ' ')"
+                },
+                "Set_variable:_Date_=_Temp_String_6": {
+                  "runAfter": {
+                    "Set_variable:_Temp_String_-_Remove_st_suffix_for_dates": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "c6c1e7a3-2a3f-401b-98a0-f537a080b7a5"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Date String",
+                    "value": "@variables('Temp String')"
+                  }
+                },
+                "Set_variable:_Date_=_Temp_String_7": {
+                  "runAfter": {
+                    "Set_variable:_Temp_String_-_Remove_rd_suffix_for_dates": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "0a199173-249f-411b-adda-9dc110e08d1e"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Date String",
+                    "value": "@variables('Temp String')"
+                  }
+                },
+                "Set_variable:_Temp_String_-_Remove_rd_suffix_for_dates": {
+                  "runAfter": {
+                    "Set_variable:_Date_=_Temp_String_5": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "ddb76c86-1d70-4604-85a5-c719901b9ab8"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Temp String",
+                    "value": "@{replace(variables('Date String'), 'rd', ' ')}"
+                  },
+                  "description": "replace(variables('Date String'), 'rd', ' ')"
+                },
+                "Set_variable:_Temp_String_-_Remove_nd_suffix_for_dates": {
+                  "runAfter": {
+                    "Set_variable:_Date_=_Temp_String_6": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "7254dd5c-30d9-4171-8377-4886aa3f8f24"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Temp String",
+                    "value": "@{replace(variables('Date String'), 'nd', ' ')}"
+                  },
+                  "description": "replace(variables('Date String'), 'nd', ' ')"
+                },
+                "Set_variable:_Date_=_Temp_String_5": {
+                  "runAfter": {
+                    "Set_variable:_Temp_String_-_Remove_nd_suffix_for_dates": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "d8e5abbd-0e07-407f-b4d0-e608935e68c3"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Date String",
+                    "value": "@variables('Temp String')"
+                  }
+                },
+                "Set_variable:_Temp_String_-_Remove_th_suffix_for_dates": {
+                  "runAfter": {
+                    "Set_variable:_Date_=_Temp_String_7": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "a0f22c6b-d183-4e8e-8c6d-108e72e68771"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Temp String",
+                    "value": "@{replace(variables('Date String'), 'th', ' ')}"
+                  },
+                  "description": "replace(variables('Date String'), 'th', ' ')"
+                },
+                "Set_variable:_Date_=_Temp_String_4": {
+                  "runAfter": {
+                    "Set_variable:_Temp_String_-_Remove_th_suffix_for_dates": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "95796a0f-0e65-43cd-8966-707fb19fc880"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Date String",
+                    "value": "@variables('Temp String')"
+                  }
+                }
+              },
+              "runAfter": {
+                "Set_variable:_Date_String": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "99bad49b-899d-4d07-a55a-e67d7d89514c"
+              },
+              "type": "Scope"
+            },
+            "Run_a_Child_Flow:_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "d7ceb69d-a7a0-4509-adeb-bbc882031145"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "5aae3541-eade-ed11-a7c6-000d3af4aef9"
+                },
+                "body": {
+                  "text": "@variables('Trigger - Date')",
+                  "text_1": "\\s"
+                }
+              }
+            },
+            "Set_variable:_Date_String": {
+              "runAfter": {
+                "Run_a_Child_Flow:_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "6d939b2c-ff75-4197-8b0d-a2a7ebb35e76"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Date String",
+                "value": "@{trim(outputs('Run_a_Child_Flow:_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String')?['Body']?['string'])}"
+              },
+              "description": "trim(outputs('Run_a_Child_Flow:_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String')?['Body']?['string'])"
+            },
+            "Set_variable:_Temp_String_:=_Date_sans_Double_spaces": {
+              "runAfter": {
+                "Scope:_Remove_number_suffixes_from_date": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "14e06350-8965-4467-9993-0b246f964b33"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Temp String",
+                "value": "@{concat(split(variables('Date String'), ' ')[0], ' ', trim(slice(variables('Date String'), indexOf(variables('Date String'), ' '), add(lastIndexOf(variables('Date String'), ' '), 1))), slice(variables('Date String'), lastIndexOf(variables('Date String'), ' ')))}"
+              },
+              "description": "concat(split(variables('Date String'), ' ')[0], ' ', trim(slice(variables('Date String'), indexOf(variables('Date String'), ' '), add(lastIndexOf(variables('Date String'), ' '), 1))), slice(variables('Date String'), lastIndexOf(variables('Date String"
+            },
+            "Set_variable:_Fully_Normalized_Date_String": {
+              "runAfter": {
+                "Set_variable:_Temp_String_:=_Date_sans_Double_spaces": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "e381479c-d8db-403e-b033-e2373636697b"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Date String",
+                "value": "@{toLower(replace(variables('Temp String'),' ','-'))}"
+              },
+              "description": "toLower(replace(variables('Temp String'),' ','-'))"
+            }
+          },
+          "runAfter": {
+            "Compose:_Note_on_format": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "3c725f56-3609-4280-a11b-f7a210d1bb1b"
+          },
+          "type": "Scope"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "94be93e8-975a-4542-bc0b-af5ca5ea6c07"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "date": "@variables('Date')",
+              "status_code": "@variables('OUTPUT - Status Code')"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "title": "Date",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status_code": {
+                  "title": "Status Code",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "Compose": {
+          "runAfter": {
+            "Condition:_All_subsequent_steps_succeeded_then_format_date": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "2559ed67-f577-4d3f-8f08-5bc095fa6e2e"
+          },
+          "type": "Compose",
+          "inputs": "Result:@{variables('Date')},\nStatus Code:@{variables('OUTPUT - Status Code')}"
+        },
+        "Compose:_Note_on_format": {
+          "runAfter": {
+            "Compose:_Validate_Trigger_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0aa44d2e-b185-4644-b8d3-69de5faf9bf5"
+          },
+          "type": "Compose",
+          "inputs": "- Replaces any special character with a -\n- Removes any number suffixes ie: st, nd, rd, the\n- converts all characters to lowercase\nResults should contain 3 sections, divided by a dash\nEx:\nJuly 10th, 2022 -> july-10-2022"
+        },
+        "Compose:_Convert_Trigger:_Date_to_formatted_date_string": {
+          "runAfter": {
+            "Scope:_Validate_date_format": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ],
+            "Set_variable:_OUTPUT_-_status_code_=_-1,_failure_in_normalization": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "80c97aaf-dbe9-4212-8b83-aaff613caba6"
+          },
+          "type": "Compose",
+          "inputs": "- Attempts to use built in date format function\n- If built in format function fails then split the string on the dash and organize it into the proper order"
+        },
+        "Initialize_variable:_Months": {
+          "runAfter": {
+            "Initialize_variable:_Temp_String": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "3e6e4b4a-5c58-4949-a6b0-c41789fbdaa7"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Months",
+                "type": "object",
+                "value": {
+                  "January": "01",
+                  "February": "02",
+                  "March": "03",
+                  "April": "04",
+                  "May": "05",
+                  "June": "06",
+                  "July": "07",
+                  "August": "08",
+                  "September": "09",
+                  "October": "10",
+                  "November": "11",
+                  "December": "12",
+                  "jan": "01",
+                  "ja": "01",
+                  "feb": "02",
+                  "fe": "02",
+                  "mar": "03",
+                  "mr": "03",
+                  "apr": "04",
+                  "ap": "04",
+                  "may": "05",
+                  "my": "05",
+                  "jun": "06",
+                  "jn": "06",
+                  "jul": "07",
+                  "jl": "07",
+                  "aug": "08",
+                  "au": "08",
+                  "sep": "09",
+                  "sept": "09",
+                  "se": "09",
+                  "oct": "10",
+                  "oc": "10",
+                  "nov": "11",
+                  "nv": "11",
+                  "dec": "12",
+                  "de": "12"
+                }
+              }
+            ]
+          },
+          "description": "Key Valu pairs to convert any alphabetic month names into numerical format."
+        },
+        "Initialize_variable:_Year": {
+          "runAfter": {
+            "Initialize_variable:_Months": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4d7e8b51-e2a0-4f08-978f-5580e8f68124"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Year",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "If we fail to format the date, then we fill try to extract the year component from the date as to rearrange into ISO format. We save the year component to this variable. "
+        },
+        "Initialize_variable:_Month": {
+          "runAfter": {
+            "Initialize_variable:_Year": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9952c0a5-c363-49a7-8102-6f5c0745c9e3"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Month",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "If we fail to format the date, then we fill try to extract the month component from the date as to rearrange into ISO format. We save the month component to this variable. "
+        },
+        "Initialize_variable:_Day": {
+          "runAfter": {
+            "Initialize_variable:_Month": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ee8619af-ed70-4040-939d-0ca7cce94fba"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Day",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "If we fail to format the date, then we fill try to extract the day component from the date as to rearrange into ISO format. We save the day component to this variable. "
+        },
+        "Initialize_variable:_Date_Fragments": {
+          "runAfter": {
+            "Initialize_variable:_Day": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "bb093868-296a-438a-9a5e-c91b995e6a1d"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Date Fragments",
+                "type": "array",
+                "value": "@split(variables('Trigger - Date'), ' ')"
+              }
+            ]
+          },
+          "description": "split(variables('Trigger - Date'), ' ') | If we cannot convert to format we must convert the string into ISO format, to do this we split the date string into separate components and analyze each component "
+        },
+        "Initialize_variable:_Current_Fragment": {
+          "runAfter": {
+            "Initialize_variable:_Date_Fragments": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "396c3c5a-d595-488d-92e1-6f66dc6361fc"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Current Fragment",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "Used in loops to indicate the current item as we analyze date fragments."
+        },
+        "Set_variable:_OUTPUT_-_status_code_=_-1,_failure_in_normalization": {
+          "runAfter": {
+            "Scope:_Normalize_Date_String": [
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f2f754c7-1298-4a1d-b904-d598f733ca9e"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "OUTPUT - Status Code",
+            "value": -1
+          }
+        },
+        "Condition:_All_subsequent_steps_succeeded_then_format_date": {
+          "actions": {
+            "Set_variable:_OUTPUT_Date_=_Format_Date_String": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "f6d519c8-56cf-4bf7-bb1a-ea61af1e63d7"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Date",
+                "value": "@{formatDateTime(variables('Date String'),variables('Trigger - Format'),'en-US')}"
+              },
+              "description": "formatDateTime(variables('Date String'),variables('Trigger - Format'),'en-US')"
+            },
+            "Scope:_Rearrange_into_ISO_format_(on_failure)": {
+              "actions": {
+                "Set_variable:_Date_Fragments_=_Split_on_hyphen": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "2332ac57-3f85-4992-af0d-6a5bd1f27a01"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Date Fragments",
+                    "value": "@split(variables('Date String'),'-')"
+                  },
+                  "description": "split(variables('Date String'),'-')"
+                },
+                "Apply_to_each": {
+                  "foreach": "@variables('Date Fragments')",
+                  "actions": {
+                    "Check_whether_text_matches_the_specified_pattern:_day": {
+                      "runAfter": {
+                        "Scope:_Normalize_Current_Fragment": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "fa5c7f87-6838-4e83-bde0-02121becb5b5"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_regexmatchingip",
+                          "operationId": "RegexPattern",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_regexmatchingip"
+                        },
+                        "parameters": {
+                          "text": "@variables('Current Fragment')",
+                          "pattern": "^[0,1,2,3]{0,1}\\d{1}$"
+                        },
+                        "authentication": {
+                          "type": "Raw",
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                        }
+                      }
+                    },
+                    "Condition:_Current_Fragment_is_Day": {
+                      "actions": {
+                        "Set_variable:_Day_=_Current_Fragment": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "22912b08-7aad-4cef-9568-6614ebedd616"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "Day",
+                            "value": "@{if(equals(length(variables('Current Fragment')),1),concat('0',variables('Current Fragment')),variables('Current Fragment'))}"
+                          },
+                          "description": "if(equals(length(variables('Current Fragment')),1),concat('0',variables('Current Fragment')),variables('Current Fragment'))"
+                        }
+                      },
+                      "runAfter": {
+                        "Check_whether_text_matches_the_specified_pattern:_day": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "equals": [
+                          "@outputs('Check_whether_text_matches_the_specified_pattern:_day')?['body/match_found']",
+                          "@true"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "fe38d459-4b7f-4e43-b4e4-11ec6d9dceee"
+                      },
+                      "type": "If"
+                    },
+                    "Scope:_Normalize_Current_Fragment": {
+                      "actions": {
+                        "Compose:_Note_on_resultant_format": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "113b0a85-25fa-40d9-9929-4aee8fe7a6bc"
+                          },
+                          "type": "Compose",
+                          "inputs": "- trims whitespace from fragment\n- converts all alphabetic characters to lowercase\nEx:\n' JuLy ' -> 'july'"
+                        },
+                        "Set_variable:_Current_Fragment_=_Temp_String_1": {
+                          "runAfter": {
+                            "Set_variable:_Temp_String_=_normalize_current_fragment": [
+                              "Succeeded"
+                            ]
+                          },
+                          "metadata": {
+                            "operationMetadataId": "ee6d5a97-a77f-4c4d-ba54-d707c4d4a9cd"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "Current Fragment",
+                            "value": "@variables('Temp String')"
+                          }
+                        },
+                        "Set_variable:_Temp_String_=_normalize_current_fragment": {
+                          "runAfter": {
+                            "Set_variable:_Current_Date_Fragment_=_Current_Item": [
+                              "Succeeded"
+                            ]
+                          },
+                          "metadata": {
+                            "operationMetadataId": "942e6b30-bced-491b-9e89-f73b3527e61f"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "Temp String",
+                            "value": "@{toLower(trim(variables('Current Fragment')))}"
+                          },
+                          "description": "toLower(trim(variables('Current Fragment')))"
+                        },
+                        "Set_variable:_Current_Date_Fragment_=_Current_Item": {
+                          "runAfter": {
+                            "Compose:_Note_on_resultant_format": [
+                              "Succeeded"
+                            ]
+                          },
+                          "metadata": {
+                            "operationMetadataId": "cf75aeb9-2004-4304-9231-292969a4c7d5"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "Current Fragment",
+                            "value": "@{items('Apply_to_each')}"
+                          }
+                        }
+                      },
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "e0909704-4416-4c14-9556-ba38a84c0ea1"
+                      },
+                      "type": "Scope"
+                    },
+                    "Condition:_Current_Fragment_is_Year": {
+                      "actions": {
+                        "Set_variable:_Year_=_Current_Fragment": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "2542e064-4533-4aab-8095-7932a4bc4364"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "Year",
+                            "value": "@variables('Current Fragment')"
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Check_whether_text_matches_the_specified_pattern:_Year": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "equals": [
+                          "@outputs('Check_whether_text_matches_the_specified_pattern:_Year')?['body/match_found']",
+                          "@true"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "57cfcb99-2fca-4d28-89ee-57037827f2fa"
+                      },
+                      "type": "If"
+                    },
+                    "Check_whether_text_matches_the_specified_pattern:_Year": {
+                      "runAfter": {
+                        "Scope:_Normalize_Current_Fragment": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "3fca208b-1566-475b-b878-e1514b796197"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_regexmatchingip",
+                          "operationId": "RegexPattern",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_regexmatchingip"
+                        },
+                        "parameters": {
+                          "text": "@variables('Current Fragment')",
+                          "pattern": "20\\d{2}"
+                        },
+                        "authentication": {
+                          "type": "Raw",
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                        }
+                      }
+                    },
+                    "Condition:_Current_Fragment_is_Month": {
+                      "actions": {
+                        "Set_variable:_Month_=_Months[Current_Fragment]": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "84a8fa72-2dcc-405b-b571-a82b95de09d2"
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "Month",
+                            "value": "@{variables('Months')[variables('Current Fragment')]}"
+                          },
+                          "description": "variables('Months')[variables('Current Fragment')]"
+                        }
+                      },
+                      "runAfter": {
+                        "Check_whether_text_matches_the_specified_pattern:_Alpha_Month": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "equals": [
+                          "@outputs('Check_whether_text_matches_the_specified_pattern:_Alpha_Month')?['body/match_found']",
+                          "@true"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "7aa36b84-9b3d-43b1-8afa-81b8955c1f6f"
+                      },
+                      "type": "If"
+                    },
+                    "Check_whether_text_matches_the_specified_pattern:_Alpha_Month": {
+                      "runAfter": {
+                        "Scope:_Normalize_Current_Fragment": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "f63c07e4-9b34-4145-b878-122efe0ba8eb"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_regexmatchingip",
+                          "operationId": "RegexPattern",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_regexmatchingip"
+                        },
+                        "parameters": {
+                          "text": "@variables('Current Fragment')",
+                          "pattern": "(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|(nov|dec)(?:ember)?)|(ja)|(fe)|(mr)|(ap)|(my)|(jn)|(jl)|(au)|(se)|(oc)|(nv)|(de)|(sept)"
+                        },
+                        "authentication": {
+                          "type": "Raw",
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Set_variable:_Date_Fragments_=_Split_on_hyphen": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "acc2e0b7-3373-4669-ab11-ed8c55ce6979"
+                  },
+                  "type": "Foreach"
+                },
+                "Set_variable:_Date_String,_Update_date_string_with_new_format": {
+                  "runAfter": {
+                    "Apply_to_each": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "42ad65bd-30d5-43b6-a6e2-023fdc439f6c"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Date String",
+                    "value": "@{variables('Day')}-@{variables('Month')}-@{variables('Year')}"
+                  }
+                },
+                "Set_variable:_OUTPUT_Date_=_Newly_Formatted_Date_String_": {
+                  "runAfter": {
+                    "Set_variable:_Date_String,_Update_date_string_with_new_format": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "f6d519c8-56cf-4bf7-bb1a-ea61af1e63d7"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Date",
+                    "value": "@{formatDateTime(variables('Date String'), variables('Trigger - Format'), 'en-US')}"
+                  },
+                  "description": "formatDateTime(variables('Date String'),variables('Trigger - Format'),'en-US')"
+                },
+                "Scope:_Format_failure_outputs": {
+                  "actions": {
+                    "Set_variable:_OUTPUT_-_status_code_=_-1": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "c5e351bd-013d-44a9-9462-7976c2e508d0"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "OUTPUT - Status Code",
+                        "value": -1
+                      }
+                    },
+                    "Set_variable:_Date_is_empty_string": {
+                      "runAfter": {
+                        "Set_variable:_OUTPUT_-_status_code_=_-1": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "b5b1381f-9f9f-46a0-a0ef-fc4df25c0357"
+                      },
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "Date",
+                        "value": "@{join(variables('Date Fragments'),'-')}"
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Set_variable:_OUTPUT_Date_=_Newly_Formatted_Date_String_": [
+                      "Failed"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "73fe8c41-9876-40d0-bcac-3901ae0d92e2"
+                  },
+                  "type": "Scope"
+                }
+              },
+              "runAfter": {
+                "Set_variable:_OUTPUT_Date_=_Format_Date_String": [
+                  "Failed"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "2960b30e-b240-4b41-8d27-af72843239b5"
+              },
+              "type": "Scope"
+            }
+          },
+          "runAfter": {
+            "Compose:_Convert_Trigger:_Date_to_formatted_date_string": [
+              "Succeeded"
+            ]
+          },
+          "expression": {
+            "equals": [
+              "@variables('OUTPUT - Status Code')",
+              0
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "031565b6-3b4b-4283-9425-93dd30671547"
+          },
+          "type": "If"
+        },
+        "Initialize_variable:_Date_String": {
+          "runAfter": {
+            "Initialize_variable:_Current_Fragment": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e8b6b7f4-35d3-44ec-9630-c8ee82bd76ee"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Date String",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "Normalized Date Trigger"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

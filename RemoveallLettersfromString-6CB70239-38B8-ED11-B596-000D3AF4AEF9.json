@@ -1,0 +1,169 @@
+{
+  "properties": {
+    "connectionReferences": {},
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "9f6c6677-ee90-41b1-8c3e-af62aeddf770"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "String",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter your input",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "text_1": {
+                  "title": "Replace Char",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter your input",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Compose:_Experssion": {
+          "runAfter": {
+            "Initialize_variable:_String_": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f22ea8cb-182f-4214-9cfb-cba6859f132d"
+          },
+          "type": "Compose",
+          "inputs": "trim(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(toUpper(triggerBody()['text']),'A',variables('Replace Char')), 'B',variables('Replace Char')),'C',variables('Replace Char')),'D',variables('Replace Char')),'E',variables('Replace Char')),'F',variables('Replace Char')),'G',variables('Replace Char')),'H',variables('Replace Char')),'I',variables('Replace Char')),'J',variables('Replace Char')),'K',variables('Replace Char')),'L',variables('Replace Char')),'M',variables('Replace Char')),'N',variables('Replace Char')),'O',variables('Replace Char')),'P',variables('Replace Char')),'Q',variables('Replace Char')),'R',variables('Replace Char')),'S',variables('Replace Char')),'T',variables('Replace Char')),'U',variables('Replace Char')),'V',variables('Replace Char')),'W',variables('Replace Char')),'X',variables('Replace Char')),'Y',variables('Replace Char')),'Z',variables('Replace Char')))"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose:_OUTPUT": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "25496a5d-97a9-49b3-beb3-34fde06a4fd5"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "string": "@variables('String')"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "string": {
+                  "title": "String",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "description": "join(split(variables('String'),' '),'')"
+        },
+        "Initialize_variable:_String_": {
+          "runAfter": {
+            "Set_variable:_Replace_Char": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7768a54b-3a86-4601-aadd-e03570e9b7ae"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "String",
+                "type": "string",
+                "value": "@{trim(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(toUpper(triggerBody()['text']),'A',variables('Replace Char')), 'B',variables('Replace Char')),'C',variables('Replace Char')),'D',variables('Replace Char')),'E',variables('Replace Char')),'F',variables('Replace Char')),'G',variables('Replace Char')),'H',variables('Replace Char')),'I',variables('Replace Char')),'J',variables('Replace Char')),'K',variables('Replace Char')),'L',variables('Replace Char')),'M',variables('Replace Char')),'N',variables('Replace Char')),'O',variables('Replace Char')),'P',variables('Replace Char')),'Q',variables('Replace Char')),'R',variables('Replace Char')),'S',variables('Replace Char')),'T',variables('Replace Char')),'U',variables('Replace Char')),'V',variables('Replace Char')),'W',variables('Replace Char')),'X',variables('Replace Char')),'Y',variables('Replace Char')),'Z',variables('Replace Char')))}"
+              }
+            ]
+          },
+          "description": "See compose for full expression"
+        },
+        "Compose:_📢_Flow_Definition_": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "79bbe9d6-6e2d-426e-b13d-8754b5891ef6"
+          },
+          "type": "Compose",
+          "inputs": "PURPOSE\n---------------\nRemoves all alphabetic characters from a string (both upper & lower case)\n\nINPUTS\n---------------\nString (string) - a string\n\nOUTPUTS\n---------------\nString (string) - a string without alphabetic characters\n\nDEP\n---------------\nNo dependencies.\n"
+        },
+        "Compose:_OUTPUT": {
+          "runAfter": {
+            "Compose:_Experssion": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "cff741cb-41d1-4b40-8546-589d6b78152a"
+          },
+          "type": "Compose",
+          "inputs": "@variables('String')"
+        },
+        "Initialize_variable:_Replace_Char": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition_": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "5ce20c56-a9f0-4e17-a421-e85e58539f16"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Replace Char",
+                "type": "string"
+              }
+            ]
+          },
+          "description": "Replace all letters with this character"
+        },
+        "Set_variable:_Replace_Char": {
+          "runAfter": {
+            "Initialize_variable:_Replace_Char": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1fb0f0c4-1cd9-42c3-8730-ee51ea6a707a"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "Replace Char",
+            "value": "@{if(equals(triggerBody()?['text_1'],'\\s'),' ',triggerBody()?['text_1'])}"
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

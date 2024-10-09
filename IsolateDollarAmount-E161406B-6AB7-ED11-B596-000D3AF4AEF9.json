@@ -1,0 +1,655 @@
+{
+  "properties": {
+    "connectionReferences": {},
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "a5df73a9-6ef8-4edb-8360-cad7f4e17a4b"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "Amount",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Please enter your input",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "key-button-date": {
+                  "title": "Date",
+                  "type": "string",
+                  "x-ms-dynamically-added": false
+                },
+                "location": {
+                  "type": "object",
+                  "properties": {
+                    "fullAddress": {
+                      "title": "Full address",
+                      "type": "string",
+                      "x-ms-dynamically-added": false
+                    },
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "countryOrRegion": {
+                          "title": "Country/Region",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "city": {
+                          "title": "City",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "state": {
+                          "title": "State",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "street": {
+                          "title": "Street",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        },
+                        "postalCode": {
+                          "title": "Postal code",
+                          "type": "string",
+                          "x-ms-dynamically-added": false
+                        }
+                      },
+                      "required": [
+                        "countryOrRegion",
+                        "city",
+                        "state",
+                        "street",
+                        "postalCode"
+                      ]
+                    },
+                    "coordinates": {
+                      "type": "object",
+                      "properties": {
+                        "latitude": {
+                          "title": "Latitude",
+                          "type": "number",
+                          "x-ms-dynamically-added": false
+                        },
+                        "longitude": {
+                          "title": "Longitude",
+                          "type": "number",
+                          "x-ms-dynamically-added": false
+                        }
+                      },
+                      "required": [
+                        "latitude",
+                        "longitude"
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "text",
+                "key-button-date",
+                "location"
+              ]
+            },
+            "headersSchema": {
+              "x-ms-user-name-encoded": {
+                "title": "User name",
+                "type": "string",
+                "format": "byte",
+                "x-ms-dynamically-added": false
+              },
+              "x-ms-user-email-encoded": {
+                "title": "User email",
+                "type": "string",
+                "format": "byte",
+                "x-ms-dynamically-added": false
+              },
+              "x-ms-user-timestamp": {
+                "title": "Timestamp",
+                "type": "string",
+                "x-ms-dynamically-added": false
+              }
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_variable:_Temp_String": {
+          "runAfter": {
+            "Compose:_Initialize_Helper_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e12ebb7b-7ec3-4da3-9cc0-549ee58c8cba"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Temp String",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "Used for intermediate operations as self-referencing is not supported by power automate"
+        },
+        "Compose:_📢_Flow_Definition": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "bc172a9f-79aa-49f4-b84e-153d8cf6a073"
+          },
+          "type": "Compose",
+          "inputs": "PURPOSE\n-----------------\nNormalizes the input amount. Removes any non-numeric values and ensures the amount has two decimal points. \n\nINPUTS\n-----------------\nAmount (string) - A string holding a numerical amount\n\nOUTPUTS\n-----------------\n Amount (string) -  Normalized version of input **Amount.**\n\n Status Code (Integer) - Indicates the state of the flow on termination.\n 0: Success\n-1: Could not normalize amount.\n\nDEP\n-----------------\n🟠 🔴 ⚫ 🟢 🛠️ Remove all Letters from String"
+        },
+        "Compose:_Initialize_Trigger_Variables": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "cdc2d91c-b3d9-42ec-aa4e-c9840242ba90"
+          },
+          "type": "Compose",
+          "inputs": "Compose: Initialize Trigger Variables"
+        },
+        "Initialize_variable:_Trigger_-_Amount": {
+          "runAfter": {
+            "Compose:_Initialize_Trigger_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b2b3250b-a2e7-43d5-aff0-87a777982eab"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Trigger - Amount",
+                "type": "string",
+                "value": "@triggerBody()['text']"
+              }
+            ]
+          },
+          "description": "Unformatted dollar value from Trigger"
+        },
+        "Compose:_Initialize_Output_Variables": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "67f02164-ee26-430c-bd3d-262a742d5ae1"
+          },
+          "type": "Compose",
+          "inputs": "Initialize Output Variables"
+        },
+        "Initialize_variable:_OUTPUT_-_Status_Code": {
+          "runAfter": {
+            "Compose:_Initialize_Output_Variables": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "504625c6-a5bd-414a-a17e-946b4eb0b24f"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "OUTPUT - Status Code",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          },
+          "description": "Indicates the state of the flow on termination"
+        },
+        "Initialize_variable:_OUTPUT_-_Amount": {
+          "runAfter": {
+            "Initialize_variable:_OUTPUT_-_Status_Code": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "86aa18ed-7c3e-49e6-9d94-4d47f2f75c65"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Output: Amount",
+                "type": "string",
+                "value": " "
+              }
+            ]
+          },
+          "description": "Formatted amount value"
+        },
+        "Compose:_Formats_amount": {
+          "runAfter": {
+            "Initialize_variable:_Trigger_-_Amount": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_OUTPUT_-_Amount": [
+              "Succeeded"
+            ],
+            "Initialize_variable:_Is_Credit_Memo_=_false": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "aef96e45-a0c0-4cbd-96bb-f049a50c3f7d"
+          },
+          "type": "Compose",
+          "inputs": "Normalize + Check if credit memeo"
+        },
+        "Compose:_Initialize_Helper_Variables": {
+          "runAfter": {
+            "Compose:_📢_Flow_Definition": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7a454d5b-d98d-4cc5-9ee0-29b476d6fb5c"
+          },
+          "type": "Compose",
+          "inputs": "Initialize Helper Variables"
+        },
+        "Scope:_Normalize_Amount": {
+          "actions": {
+            "Run_a_Child_Flow:_Remove_all_Letters_from_String": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "6b516192-8653-4be1-ab62-cf4c64b4e460"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "6cb70239-38b8-ed11-b596-000d3af4aef9"
+                },
+                "body": {
+                  "text": "@variables('Trigger - Amount')"
+                }
+              }
+            },
+            "Set_variable:_Amount_=_Remove_Letters_From_String": {
+              "runAfter": {
+                "Run_a_Child_Flow:_Remove_all_Letters_from_String": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "b08bb6a9-72cd-4853-b6de-4a94330f2021"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Output: Amount",
+                "value": "@{replace(replace(trim(outputs('Run_a_Child_Flow:_Remove_all_Letters_from_String')?['Body']?['string']),'(',''),')','')}"
+              },
+              "description": "replace(replace(trim(outputs('Run_a_Child_Flow:_Remove_all_Letters_from_String')?['Body']?['string']),'(',''),')','')"
+            },
+            "Compose:_Compose:_Remove_Special_characters_from_the_cent_part": {
+              "runAfter": {
+                "Set_variable:_Amount_Components_=_Trigger_Amount_split_on_decimal": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "3589d6ad-5823-4b37-a18c-7e687b7fe8a8"
+              },
+              "type": "Compose",
+              "inputs": "Compose: Compose: Remove Special characters from the cent part"
+            },
+            "Compose:_Remove_Special_characters_from_the_dollar_part": {
+              "runAfter": {
+                "Set_variable:_Amount_Components_=_Trigger_Amount_split_on_decimal": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5801b91d-1e79-4f49-b4e7-b94d4bff57a5"
+              },
+              "type": "Compose",
+              "inputs": "Compose: Remove Special characters from the dollar part"
+            },
+            "Set_variable:_Amount_Components_=_Trigger_Amount_split_on_decimal": {
+              "runAfter": {
+                "Set_variable:_Amount_=_Remove_Letters_From_String": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "630ac596-c87a-42d7-a839-2c865b0552fc"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Amount Components",
+                "value": "@split(variables('Output: Amount'),'.')"
+              },
+              "description": "split(variables('Output: Amount'),'.')"
+            },
+            "Run_a_Child_Flow-_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String": {
+              "runAfter": {
+                "Compose:_Remove_Special_characters_from_the_dollar_part": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "4d575c77-c3ac-48a6-991a-3c7d80723868"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "5aae3541-eade-ed11-a7c6-000d3af4aef9"
+                },
+                "body": {
+                  "text": "@first(variables('Amount Components'))"
+                }
+              },
+              "description": "first(variables('Amount Components'))"
+            },
+            "Run_a_Child_Flow-_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String_2": {
+              "runAfter": {
+                "Compose:_Compose:_Remove_Special_characters_from_the_cent_part": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "2a5a8ff7-fa23-4179-9ee9-a76501faed64"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "5aae3541-eade-ed11-a7c6-000d3af4aef9"
+                },
+                "body": {
+                  "text": "@if(lessOrEquals(length(variables('Amount Components')),1), '00',last(variables('Amount Components')))"
+                }
+              },
+              "description": "if(lessOrEquals(length(variables('Amount Components')),1), '00',last(variables('Amount Components')))"
+            },
+            "Set_variable:_Trigger_Amount_=_Dollar_Part.Cent_Part": {
+              "runAfter": {
+                "Run_a_Child_Flow-_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String": [
+                  "Succeeded"
+                ],
+                "Run_a_Child_Flow-_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String_2": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "468498a4-d534-4b2b-bc9e-96e3c16ce225"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Output: Amount",
+                "value": "@{body('Run_a_Child_Flow-_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String')?['string']}.@{body('Run_a_Child_Flow-_🟠_🔴_⚫_🟢_🛠️_Remove_all_Special_Characters_from_String_2')?['string']}"
+              }
+            }
+          },
+          "runAfter": {
+            "Compose:_Note_on_resultant_format": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "93814f06-42ab-4cfc-b7ce-355caaa6e9d7"
+          },
+          "type": "Scope"
+        },
+        "Initialize_variable:_Is_Credit_Memo_=_false": {
+          "runAfter": {
+            "Initialize_variable:_Amount_Components": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "23afac0d-5d62-46c3-8dfa-78a14fd04d45"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Is Credit Memo",
+                "type": "boolean",
+                "value": "@false"
+              }
+            ]
+          },
+          "description": "Indicates if the passed amount value if formatted as a credit memo"
+        },
+        "Scope:_Account_for_Credit_memo": {
+          "actions": {
+            "Condition:_trigger_amount_contains_brackets_": {
+              "actions": {
+                "Set_variable:_Is_Credit_Memo_=_true": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "a7773b7e-76f6-46c1-b718-5a82b503a0f1"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Is Credit Memo",
+                    "value": "@true"
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "and": [
+                  {
+                    "contains": [
+                      "@variables('Trigger - Amount')",
+                      "("
+                    ]
+                  },
+                  {
+                    "contains": [
+                      "@variables('Trigger - Amount')",
+                      ")"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "0ef47c54-e0d9-4314-a025-3535a069e2c2"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Compose:_Note_on_credit_memos": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d5cdaa2b-3ff6-46f4-af88-a7c772837087"
+          },
+          "type": "Scope"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "Compose:_OUTPUTS": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "1d49e66d-9c68-4002-928c-7c6a3e2a9c2e"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "amount": "@variables('Output: Amount')",
+              "status_code": "@{variables('OUTPUT - Status Code')}"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "title": "Amount",
+                  "x-ms-dynamically-added": true,
+                  "type": "string"
+                },
+                "status_code": {
+                  "title": "Status Code",
+                  "x-ms-dynamically-added": true,
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "Compose:_OUTPUTS": {
+          "runAfter": {
+            "Condition:_Is_Credit_Memo": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ec920f37-525c-4f56-bb4d-e8cbacc68939"
+          },
+          "type": "Compose",
+          "inputs": "Result: @{variables('Output: Amount')},\nStatus Code: @{variables('OUTPUT - Status Code')}"
+        },
+        "Condition:_Is_Credit_Memo": {
+          "actions": {
+            "Set_variable:_Temp_String_=_Output:_Amount": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "1290d54e-9385-45b8-94ba-18a7e17bf2d9"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Temp String",
+                "value": "@variables('Output: Amount')"
+              }
+            },
+            "Set_variable:_Output:_Amount_=_(Trigger_Amount)": {
+              "runAfter": {
+                "Set_variable:_Temp_String_=_Output:_Amount": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "702b907c-a7cb-455d-9017-1c5ccd566b25"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Output: Amount",
+                "value": "(@{variables('Temp String')})"
+              }
+            }
+          },
+          "runAfter": {
+            "Scope:_Account_for_Credit_memo": [
+              "Failed",
+              "Skipped",
+              "Succeeded",
+              "TimedOut"
+            ],
+            "Set_variable:_Status_Code_=_-1": [
+              "Succeeded",
+              "Failed",
+              "TimedOut",
+              "Skipped"
+            ]
+          },
+          "expression": {
+            "equals": [
+              "@variables('Is Credit Memo')",
+              "@true"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "60ee3a99-b620-4b3d-bbb2-078040888a35"
+          },
+          "type": "If"
+        },
+        "Initialize_variable:_Amount_Components": {
+          "runAfter": {
+            "Initialize_variable:_Temp_String": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "12482c15-acf6-4f0b-944a-b84fd13cbfa4"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "Amount Components",
+                "type": "array",
+                "value": []
+              }
+            ]
+          },
+          "description": "Splits dollar amount into dollar part and cent part to ensure that both parts exist (float is expected) If the cent part is missing then it is added"
+        },
+        "Set_variable:_Status_Code_=_-1": {
+          "runAfter": {
+            "Scope:_Normalize_Amount": [
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b444a747-80d8-4c78-9be0-d9e4a9e0fb2f"
+          },
+          "type": "SetVariable",
+          "inputs": {
+            "name": "OUTPUT - Status Code",
+            "value": -1
+          }
+        },
+        "Compose:_Note_on_credit_memos": {
+          "runAfter": {
+            "Compose:_Formats_amount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "75a4b66c-1f17-40ca-b558-d03866d23a91"
+          },
+          "type": "Compose",
+          "inputs": "Amounts formatted as credit memos should still be recognizable as credit memos after the fact. This check ensures that the bracets will remain on the output varaible. Credit memos are indicated by the bracets containing them.\nEX: \n(1243.99) <- credit memo\n 1243.99  <- not  a credit memo"
+        },
+        "Compose:_Note_on_resultant_format": {
+          "runAfter": {
+            "Compose:_Formats_amount": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "88882ca6-28f3-4cb0-82d1-c48ae2d9985b"
+          },
+          "type": "Compose",
+          "inputs": "All successful outputs should be in the format:\n\\d+\\.\\d(2)\nEx:\n$13.55 -> 13.55\n13 -> 13.00\n$-13.99 -> 13.99\nThat is pretty much what happens:\n                     $dollar.cent\n                      /    split    \\\n                   /                      \\\n             $ dollar                cent\n                 |                            |\nnormalized dollar           normalized cent\n                 \\                           /    \n                   \\        join        /  \n       normalized dollar.normalized cent\n"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
